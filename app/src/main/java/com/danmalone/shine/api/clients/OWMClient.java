@@ -1,5 +1,8 @@
 package com.danmalone.shine.api.clients;
 
+import com.danmalone.shine.api.models.City;
+import com.danmalone.shine.api.models.CityResponse;
+import com.danmalone.shine.api.models.Forecast;
 import com.danmalone.shine.api.models.Weather;
 
 import java.util.Locale;
@@ -13,7 +16,7 @@ import retrofit.http.Query;
  */
 public interface OWMClient {
 
-    static String BASE_URL = "http://api.openweathermap.org/data/2.5/weather";
+    static String BASE_URL = "http://api.openweathermap.org/data/2.5/";
     static String IMG_URL = "http://openweathermap.org/img/w/";
     static String API_KEY = "9148af30bec092c9f88702588c5bdacb";
 
@@ -27,15 +30,18 @@ public interface OWMClient {
             @Path("repo") String repo
     );*/
 
-    @GET("/")
-    Weather getCity(@Query("q") String cityAndCountry);
+    @GET("/weather/")
+    Weather getCityWeather(@Query("q") String cityAndCountry);
 
 
-    @GET("/find/name")
-    Weather findByName(@Query("q") String cityNameAndCountryCode);
+    @GET("/find")
+    CityResponse findCityByNameAndCode(@Query("q") String cityNameAndCountryCode);
 
-    @GET("forecast/city/{city_id}?type=json&units=metric")
-    Weather forcastWeatherAtCity(@Path("city_id") String cityId);
+    @GET("/forecast/?type=json&units=metric")
+    Forecast forcastWeatherAtCity(@Query("q") String cityName);
+
+    @GET("/find")
+    CityResponse findCityByName(@Query("q") String name, @Query("type") String like);
 
 }
 

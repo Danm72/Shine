@@ -17,10 +17,14 @@ public class Weather {
     @Expose
     @SerializedName("weather")
     private List<Description> descriptions = new ArrayList<Description>();
+
+
+    @Expose
+    private String description;
     @Expose
     private String base;
     @Expose
-    private Temp main;
+    private String main;
     @Expose
     private Wind wind;
     @Expose
@@ -66,11 +70,11 @@ public class Weather {
         this.base = base;
     }
 
-    public Temp getMain1() {
+    public String getMain1() {
         return main;
     }
 
-    public void setMain1(Temp temp) {
+    public void setMain1(String temp) {
         this.main = temp;
     }
 
@@ -120,6 +124,10 @@ public class Weather {
 
     public void setCod(Integer cod) {
         this.cod = cod;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

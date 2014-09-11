@@ -19,6 +19,17 @@ public class Sys {
     @Expose
     private Integer sunset;
 
+    @Expose
+    private Integer population;
+
+    public Integer getPopulation() {
+        return population;
+    }
+
+    public void setPopulation(Integer population) {
+        this.population = population;
+    }
+
     public Integer getType() {
         return type;
     }

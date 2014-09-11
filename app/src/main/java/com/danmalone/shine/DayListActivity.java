@@ -3,8 +3,10 @@ package com.danmalone.shine;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
+import android.support.v7.app.ActionBarActivity;
 
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OptionsMenu;
 
 
 /**
@@ -24,7 +26,8 @@ import org.androidannotations.annotations.EActivity;
  * to listen for item selections.
  */
 @EActivity
-public class DayListActivity extends Activity
+@OptionsMenu(R.menu.menu)
+public class DayListActivity extends ActionBarActivity
         implements DayListFragment.Callbacks {
 
     /**
