@@ -1,4 +1,9 @@
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:padding="4dip"
+    android:gravity="center_horizontal"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <!--<fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/day_list"
     android:name="com.danmalone.shine.DayListFragment_"
@@ -7,4 +12,13 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     tools:context=".DayListActivity"
-    tools:layout="@android:layout/list_content" />
+    tools:layout="@android:layout/list_content" />-->
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1">
+    </android.support.v4.view.ViewPager>
+
+</LinearLayout>

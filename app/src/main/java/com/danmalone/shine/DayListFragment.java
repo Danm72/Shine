@@ -2,27 +2,59 @@ package com.danmalone.shine;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.app.ListFragment;
-import android.view.View;
-import android.widget.ArrayAdapter;
+import android.support.v4.app.Fragment;
 import android.widget.ListView;
 
+import com.danmalone.shine.adapters.DayListAdapter;
+import com.danmalone.shine.api.clients.OWMClient;
+import com.danmalone.shine.api.models.DailyForecast;
+import com.danmalone.shine.api.models.Forecast;
+import com.danmalone.shine.models.DayListModel;
 
-import com.danmalone.shine.dummy.DummyContent;
-
+import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ItemClick;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
+
+import java.text.DateFormatSymbols;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
+import retrofit.RestAdapter;
+
+import static com.danmalone.shine.api.clients.OWMClient.BASE_URL;
 
 /**
  * A list fragment representing a list of Days. This fragment
  * also supports tablet devices by allowing list items to be given an
  * 'activated' state upon selection. This helps indicate which item is
  * currently being viewed in a {@link DayDetailFragment}.
- * <p>
+ * <p/>
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-@EFragment
-public class DayListFragment extends ListFragment {
+@EFragment(R.layout.day_list)
+public class DayListFragment extends Fragment {
+
+    OWMClient client;
+
+    @ViewById
+    ListView list;
+
+    @Bean
+    DayListAdapter adapter;
+
+    @FragmentArg("location")
+    String location;
+
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -70,27 +102,31 @@ public class DayListFragment extends ListFragment {
     public DayListFragment() {
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    @AfterViews
+    void bindAdapter() {
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint(BASE_URL)
+                .build();
 
-        // TODO: replace with a real list adapter.
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(
-                getActivity(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                DummyContent.ITEMS));
+        restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
+
+        client = restAdapter.create(OWMClient.class);
+
+        if(location != null)
+            attemptAPICall(client, location);
+
+        list.setAdapter(adapter);
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
-        // Restore the previously serialized activated item position.
-        if (savedInstanceState != null
-                && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
-            setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
-        }
+    @AfterInject
+    void test() {
+    }
+
+
+    @ItemClick
+    void listItemClicked(DayListModel person) {
+        mCallbacks.onItemSelected("1");
     }
 
     @Override
@@ -114,15 +150,6 @@ public class DayListFragment extends ListFragment {
     }
 
     @Override
-    public void onListItemClick(ListView listView, View view, int position, long id) {
-        super.onListItemClick(listView, view, position, id);
-
-        // Notify the active callbacks interface (the activity, if the
-        // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (mActivatedPosition != ListView.INVALID_POSITION) {
@@ -138,18 +165,46 @@ public class DayListFragment extends ListFragment {
     public void setActivateOnItemClick(boolean activateOnItemClick) {
         // When setting CHOICE_MODE_SINGLE, ListView will automatically
         // give items the 'activated' state when touched.
-        getListView().setChoiceMode(activateOnItemClick
+        list.setChoiceMode(activateOnItemClick
                 ? ListView.CHOICE_MODE_SINGLE
                 : ListView.CHOICE_MODE_NONE);
     }
 
     private void setActivatedPosition(int position) {
         if (position == ListView.INVALID_POSITION) {
-            getListView().setItemChecked(mActivatedPosition, false);
+            list.setItemChecked(mActivatedPosition, false);
         } else {
-            getListView().setItemChecked(position, true);
+            list.setItemChecked(position, true);
         }
 
         mActivatedPosition = position;
+    }
+
+    @Background
+    void attemptAPICall(OWMClient client, String location) {
+//        Weather weather = client.getCityWeather("Dublin, Ireland");
+        Forecast forecast = client.forcastWeatherAtCity(location);
+
+        updateView(forecast);
+    }
+
+    @UiThread
+    void updateView(Forecast forecast) {
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar cal = Calendar.getInstance();
+
+        for (DailyForecast dailyForecast : forecast.getList())
+            try {
+                Date date = fmt.parse(dailyForecast.getDtTxt());
+                cal.setTime(date);
+                int day = cal.get(Calendar.DAY_OF_WEEK);
+                DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
+                String dayOfMonthStr = symbols.getWeekdays()[day];
+                double temp = dailyForecast.getMain().getTemp();
+                adapter.add(new DayListModel(dayOfMonthStr, temp + "", temp > 20 ? R.drawable.sunny : R.drawable.chance_of_rain));
+                adapter.notifyDataSetChanged();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
     }
 }
