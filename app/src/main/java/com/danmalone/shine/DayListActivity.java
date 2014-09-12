@@ -27,7 +27,7 @@ import org.androidannotations.annotations.OptionsMenu;
  */
 @EActivity
 @OptionsMenu(R.menu.menu)
-public class DayListActivity extends ActionBarActivity
+public class DayListActivity extends Activity
         implements DayListFragment.Callbacks {
 
     /**
@@ -50,9 +50,9 @@ public class DayListActivity extends ActionBarActivity
 
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
-            ((DayListFragment) getFragmentManager()
+            /*((DayListFragment) getFragmentManager()
                     .findFragmentById(R.id.day_list))
-                    .setActivateOnItemClick(true);
+                    .setActivateOnItemClick(true);*/
         }
 
         // TODO: If exposing deep links into your app, handle intents here.

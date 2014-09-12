@@ -1,16 +1,31 @@
 package com.danmalone.shine;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.app.ListFragment;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 
+import com.danmalone.shine.api.clients.OWMClient;
 import com.danmalone.shine.dummy.DummyContent;
 
+import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
+
+import retrofit.RestAdapter;
+
+import static com.danmalone.shine.api.clients.OWMClient.BASE_URL;
 
 /**
  * A list fragment representing a list of Days. This fragment
@@ -21,9 +36,12 @@ import org.androidannotations.annotations.EFragment;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-@EFragment
-public class DayListFragment extends ListFragment {
+@EFragment(R.layout.day_list)
+public class DayListFragment extends Fragment {
 
+
+    @ViewById
+    RecyclerView recycle_list;
     /**
      * The serialization (saved instance state) Bundle key representing the
      * activated item position. Only used on tablets.
@@ -75,14 +93,17 @@ public class DayListFragment extends ListFragment {
         super.onCreate(savedInstanceState);
 
         // TODO: replace with a real list adapter.
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(
+     /*   setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(
                 getActivity(),
-                android.R.layout.simple_list_item_activated_1,
+                R.id.day_list,
                 android.R.id.text1,
-                DummyContent.ITEMS));
+                DummyContent.ITEMS));*/
+
+
+
     }
 
-    @Override
+  /*  @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -91,6 +112,24 @@ public class DayListFragment extends ListFragment {
                 && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
             setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
         }
+
+
+
+
+    }*/
+
+    @AfterInject
+    void calledAfterInjection() {
+
+    }
+
+    @AfterViews
+    void calledAfterViewInjection() {
+//        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.day_list);
+        recycle_list.setHasFixedSize(true);
+        recycle_list.setAdapter(new RecyclerViewDemoAdapter(DummyContent.ITEMS,  R.layout.list_item));
+        recycle_list.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+        recycle_list.setItemAnimator(new DefaultItemAnimator());
     }
 
     @Override
@@ -113,14 +152,14 @@ public class DayListFragment extends ListFragment {
         mCallbacks = sDummyCallbacks;
     }
 
-    @Override
+  /*  @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
         mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
-    }
+    }*/
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -130,11 +169,11 @@ public class DayListFragment extends ListFragment {
             outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
         }
     }
-
-    /**
+/*
+    *//**
      * Turns on activate-on-click mode. When this mode is on, list items will be
      * given the 'activated' state when touched.
-     */
+     *//*
     public void setActivateOnItemClick(boolean activateOnItemClick) {
         // When setting CHOICE_MODE_SINGLE, ListView will automatically
         // give items the 'activated' state when touched.
@@ -151,5 +190,5 @@ public class DayListFragment extends ListFragment {
         }
 
         mActivatedPosition = position;
-    }
+    }*/
 }
