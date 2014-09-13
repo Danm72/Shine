@@ -1,5 +1,6 @@
 package com.danmalone.shine;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
@@ -41,11 +42,10 @@ public class DayDetailActivity extends Activity {
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
-            Bundle arguments = new Bundle();
-            arguments.putString(DayDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(DayDetailFragment.ARG_ITEM_ID));
-            DayDetailFragment fragment = new DayDetailFragment_();
-            fragment.setArguments(arguments);
+            String location = getIntent().getStringExtra(DayDetailFragment.ARG_ITEM_ID);
+
+            Fragment fragment = DayDetailFragment_.builder().location(location)
+                    .build();
             getFragmentManager().beginTransaction()
                     .add(R.id.day_detail_container, fragment)
                     .commit();

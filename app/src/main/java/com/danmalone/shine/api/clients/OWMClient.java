@@ -1,7 +1,7 @@
 package com.danmalone.shine.api.clients;
 
-import com.danmalone.shine.api.models.City;
 import com.danmalone.shine.api.models.CityResponse;
+import com.danmalone.shine.api.models.DailyModels.DailyForecast;
 import com.danmalone.shine.api.models.Forecast;
 import com.danmalone.shine.api.models.Weather;
 
@@ -38,10 +38,13 @@ public interface OWMClient {
     CityResponse findCityByNameAndCode(@Query("q") String cityNameAndCountryCode);
 
     @GET("/forecast/?type=json&units=metric")
-    Forecast forcastWeatherAtCity(@Query("q") String cityName);
+    com.danmalone.shine.api.models.ForecastModels.Forecast forcastWeatherAtCity(@Query("q") String cityName);
 
     @GET("/find")
     CityResponse findCityByName(@Query("q") String name, @Query("type") String like);
 
+    @GET("/forecast/daily?type=json&units=metric")
+    DailyForecast forecastWeatherAtCityDaily(@Query("q") String name);
+//    http://api.openweathermap.org/data/2.5/forecast/daily?q=london&units=metric&cnt=14&_=1410608843646
 }
 

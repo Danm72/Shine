@@ -7,7 +7,9 @@ import android.widget.ListView;
 
 import com.danmalone.shine.adapters.DayListAdapter;
 import com.danmalone.shine.api.clients.OWMClient;
-import com.danmalone.shine.api.models.DailyForecast;
+import com.danmalone.shine.api.models.DailyModels.DailyForecast;
+
+import com.danmalone.shine.api.models.DailyModels.DailyWeather;
 import com.danmalone.shine.api.models.Forecast;
 import com.danmalone.shine.models.DayListModel;
 
@@ -22,8 +24,6 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.text.DateFormatSymbols;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -112,7 +112,7 @@ public class DayListFragment extends Fragment {
 
         client = restAdapter.create(OWMClient.class);
 
-        if(location != null)
+        if (location != null)
             attemptAPICall(client, location);
 
         list.setAdapter(adapter);
@@ -126,7 +126,7 @@ public class DayListFragment extends Fragment {
 
     @ItemClick
     void listItemClicked(DayListModel person) {
-        mCallbacks.onItemSelected("1");
+        mCallbacks.onItemSelected(location);
     }
 
     @Override
@@ -183,28 +183,47 @@ public class DayListFragment extends Fragment {
     @Background
     void attemptAPICall(OWMClient client, String location) {
 //        Weather weather = client.getCityWeather("Dublin, Ireland");
-        Forecast forecast = client.forcastWeatherAtCity(location);
+//        Forecast forecast = client.forcastWeatherAtCity(location);
+        DailyForecast forecastDaily = null;
 
-        updateView(forecast);
+        if(location != null) {
+            forecastDaily = client.forecastWeatherAtCityDaily(location);
+        }
+
+//        forecastDaily.toString();
+        updateView(forecastDaily);
     }
 
     @UiThread
-    void updateView(Forecast forecast) {
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    void updateView(DailyForecast forecast) {
         Calendar cal = Calendar.getInstance();
 
-        for (DailyForecast dailyForecast : forecast.getList())
-            try {
-                Date date = fmt.parse(dailyForecast.getDtTxt());
-                cal.setTime(date);
-                int day = cal.get(Calendar.DAY_OF_WEEK);
-                DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
-                String dayOfMonthStr = symbols.getWeekdays()[day];
-                double temp = dailyForecast.getMain().getTemp();
-                adapter.add(new DayListModel(dayOfMonthStr, temp + "", temp > 20 ? R.drawable.sunny : R.drawable.chance_of_rain));
-                adapter.notifyDataSetChanged();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+        for (DailyWeather dailyForecast : forecast.getList()) {
+            Date date = new Date(dailyForecast.getDt() * 1000L);
+            cal.setTime(date);
+            int day = cal.get(Calendar.DAY_OF_WEEK);
+            DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
+            String dayOfMonthStr = symbols.getWeekdays()[day];
+            double maxTmp = dailyForecast.getTemp().getMax();
+
+            int drawable = decideOnIcon(dailyForecast);
+            adapter.add(new DayListModel(dayOfMonthStr, maxTmp + "°", drawable));
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    int decideOnIcon(DailyWeather forecast) {
+        double temp = forecast.getTemp().getMax();
+        int drawable;
+        if (temp > 20) {
+            String weather = forecast.getWeather().get(0).getMain();
+            if (weather.equals("Clear"))
+                drawable = R.drawable.sunny;
+            else
+                drawable = R.drawable.cloudy;
+        } else
+            drawable = R.drawable.haze;
+
+        return drawable;
     }
 }

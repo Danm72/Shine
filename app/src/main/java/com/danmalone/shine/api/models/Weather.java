@@ -17,8 +17,6 @@ public class Weather {
     @Expose
     @SerializedName("weather")
     private List<Description> descriptions = new ArrayList<Description>();
-
-
     @Expose
     private String description;
     @Expose
@@ -54,7 +52,7 @@ public class Weather {
         this.sys = sys;
     }
 
-    public List<Description> getDescription() {
+    public List<Description> getDescriptions() {
         return descriptions;
     }
 
@@ -124,6 +122,10 @@ public class Weather {
 
     public void setCod(Integer cod) {
         this.cod = cod;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public void setDescription(String description) {

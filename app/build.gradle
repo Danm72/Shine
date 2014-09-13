@@ -40,6 +40,9 @@ dependencies {
     apt "org.androidannotations:androidannotations:3.0"
     compile 'org.androidannotations:androidannotations-api:3.0'
     compile 'com.google.android.gms:play-services:5.2.08'
+    compile 'com.github.johnkil.android-robototextview:robototextview:2.1.0'
+    compile project(':HoloGraphLibrary')
+
 }
 
 apt {

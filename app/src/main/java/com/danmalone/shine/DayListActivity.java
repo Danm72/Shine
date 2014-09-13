@@ -1,6 +1,7 @@
 package com.danmalone.shine;
 
 import android.app.ActionBar;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -83,7 +84,7 @@ public class DayListActivity extends ActionBarActivity
     void afterV() {
         final ActionBar bar = getActionBar();
         bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        bar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
+//        bar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
 
         mTabsAdapter = new TabsAdapter(this, pager);
 
@@ -111,10 +112,9 @@ public class DayListActivity extends ActionBarActivity
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
-            Bundle arguments = new Bundle();
-            arguments.putString(DayDetailFragment.ARG_ITEM_ID, id);
-            DayDetailFragment fragment = new DayDetailFragment_();
-            fragment.setArguments(arguments);
+            Fragment fragment = DayDetailFragment_.builder().location(id)
+                    .build();
+
             getFragmentManager().beginTransaction()
                     .replace(R.id.day_detail_container, fragment)
                     .commit();

@@ -66,8 +66,6 @@ public class TabsAdapter extends FragmentPagerAdapter
 
         return DayListFragment_.builder().location(info.name)
                 .build();
-
-//        return Fragment.instantiate(mContext, info.clss.getName(), info.args);
     }
 
     @Override

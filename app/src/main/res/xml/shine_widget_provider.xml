@@ -4,7 +4,7 @@
     android:minWidth="40dp"
     android:minHeight="40dp"
     android:updatePeriodMillis="1800000"
-    android:previewImage="@drawable/shine"
+    android:previewImage="@drawable/widget"
     android:initialLayout="@layout/widget_layout"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen|keyguard"
