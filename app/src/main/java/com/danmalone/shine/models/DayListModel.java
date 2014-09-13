@@ -5,9 +5,9 @@ package com.danmalone.shine.models;
  */
 public class DayListModel {
 
-    String day;
-    String daylist_weather_degree;
-    int imgResource;
+    public String day;
+    public String daylist_weather_degree;
+    public int imgResource;
 
     public DayListModel(String day, String daylist_weather_degree, int imgResource) {
         this.day = day;

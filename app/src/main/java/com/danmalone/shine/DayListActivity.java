@@ -50,13 +50,6 @@ public class DayListActivity extends ActionBarActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        pager = new ViewPager(this);
-//        mViewPager.setId(R.id.pager);
-
-//        setContentView(R.layout.activity_day_list);
-
-
-//        getActionBar().setTitle("Title");
 
         if (findViewById(R.id.day_detail_container) != null) {
             // The detail container view will be present only in the
@@ -107,13 +100,13 @@ public class DayListActivity extends ActionBarActivity
      * indicating that the item with the given ID was selected.
      */
     @Override
-    public void onItemSelected(String id) {
+    public void onItemSelected(String location, String day) {
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
-            Fragment fragment = DayDetailFragment_.builder().location(id)
-                    .build();
+
+            Fragment fragment = DayDetailFragment_.builder().location(location).day(day).build();
 
             getFragmentManager().beginTransaction()
                     .replace(R.id.day_detail_container, fragment)
@@ -123,7 +116,9 @@ public class DayListActivity extends ActionBarActivity
             // In single-pane mode, simply start the detail activity
             // for the selected item ID.
             Intent detailIntent = new Intent(this, DayDetailActivity_.class);
-            detailIntent.putExtra(DayDetailFragment.ARG_ITEM_ID, id);
+            detailIntent.putExtra("Location", location);
+            detailIntent.putExtra("Day", day);
+
             startActivity(detailIntent);
         }
     }

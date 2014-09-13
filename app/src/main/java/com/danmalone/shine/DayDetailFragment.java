@@ -5,14 +5,11 @@ import android.graphics.Color;
 import android.widget.TextView;
 
 import com.danmalone.shine.api.clients.OWMClient;
-import com.danmalone.shine.api.models.DailyForecast;
 import com.danmalone.shine.api.models.ForecastModels.DetailedForecast;
 import com.danmalone.shine.api.models.ForecastModels.Forecast;
 import com.danmalone.shine.dummy.DummyContent;
-import com.danmalone.shine.models.DayListModel;
-import com.echo.holographlibrary.Line;
-import com.echo.holographlibrary.LineGraph;
-import com.echo.holographlibrary.LinePoint;
+import com.echo.holographlibrary.Bar;
+import com.echo.holographlibrary.BarGraph;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -25,13 +22,12 @@ import org.androidannotations.annotations.ViewById;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import retrofit.RestAdapter;
 
@@ -54,14 +50,19 @@ public class DayDetailFragment extends Fragment {
     TextView day_detail;
 
     @ViewById
-    LineGraph linegraph;
+    BarGraph graph;
 
-    Map<String,DayListModel> days;
+    ArrayList<Bar> points = new ArrayList<Bar>();
+
+    List<Reading> days;
 
     OWMClient client;
 
     @FragmentArg("location")
     String location;
+
+    @FragmentArg("day")
+    String day;
 
     /**
      * The dummy content this fragment is presenting.
@@ -84,42 +85,14 @@ public class DayDetailFragment extends Fragment {
         restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
 
         client = restAdapter.create(OWMClient.class);
-        days = new HashMap<String, DayListModel>();
+        days = new LinkedList<Reading>();
 
         attemptAPICall(client);
     }
 
     @AfterViews
     void calledAfterViewInjection() {
-
-        Line l = new Line();
-        LinePoint p = new LinePoint();
-        p.setX(0);
-        p.setY(5);
-        l.addPoint(p);
-        p = new LinePoint();
-        p.setX(8);
-        p.setY(8);
-        l.addPoint(p);
-        p = new LinePoint();
-        p.setX(10);
-        p.setY(4);
-        l.addPoint(p);
-        l.setColor(Color.parseColor("#FFBB33"));
-
-        linegraph.addLine(l);
-        linegraph.setRangeY(0, 10);
-        linegraph.setLineToFill(0);
-
-        linegraph.setOnPointClickedListener(new LineGraph.OnPointClickedListener() {
-
-            @Override
-            public void onClick(int lineIndex, int pointIndex) {
-                // TODO Auto-generated method stub
-
-            }
-
-        });
+        getActivity().getActionBar().setTitle(location.split(",")[0]);
     }
 
     @Background
@@ -127,7 +100,7 @@ public class DayDetailFragment extends Fragment {
 //        Weather weather = client.getCityWeather("Dublin, Ireland");
         Forecast forecast = null;
 
-        if(location!=null)
+        if (location != null)
             forecast = client.forcastWeatherAtCity(location);
 
         updateView(forecast);
@@ -135,6 +108,7 @@ public class DayDetailFragment extends Fragment {
 
     @UiThread
     void updateView(Forecast forecast) {
+        day_detail.setText(day);
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -151,23 +125,35 @@ public class DayDetailFragment extends Fragment {
             String dayOfMonthStr = symbols.getWeekdays()[day];
             double temp = dailyForecast.getMain().getTemp();
 
-            int drawable = decideOnIcon(dailyForecast);
-            days.put(dayOfMonthStr, new DayListModel(dayOfMonthStr, temp + "°", drawable));
+            if (dayOfMonthStr.equals(this.day))
+                days.add(new Reading(dayOfMonthStr, temp, dailyForecast.getMain().getTempMin(), date.getHours(), ""));
         }
+
+        for (Reading day : days) {
+            Bar bar = new Bar();
+            bar.setName(day.hour < 10 ? ("0" + day.hour + ":00") : (day.hour + ":00"));
+            bar.setValue((int) day.maxTmp);
+            bar.setColor(Color.parseColor("#4484f6"));
+            bar.setLabelColor(Color.parseColor("#1485CC"));
+            bar.setValueSuffix("°");
+            points.add(bar);
+        }
+        graph.setBars(points);
     }
 
-    int decideOnIcon(DetailedForecast forecast) {
-        double temp = forecast.getMain().getTemp();
-        int drawable;
-        if (temp > 20) {
-            String weather = forecast.getWeather().get(0).getMain();
-            if (weather.equals("Clear"))
-                drawable = R.drawable.sunny;
-            else
-                drawable = R.drawable.cloudy;
-        } else
-            drawable = R.drawable.haze;
+    private class Reading {
+        String day;
+        double maxTmp;
+        double minTmp;
+        int hour;
+        String description;
 
-        return drawable;
+        private Reading(String day, double maxTmp, double minTmp, int hour, String description) {
+            this.day = day;
+            this.maxTmp = maxTmp;
+            this.minTmp = minTmp;
+            this.hour = hour;
+            this.description = description;
+        }
     }
 }

@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Monday"
-            app:typeface="roboto_bold"
+            app:typeface="roboto_slab_regular"
             android:id="@+id/daylist_weather_text" />
     </LinearLayout>
 
@@ -42,7 +42,7 @@
         android:orientation="vertical"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
-        android:paddingLeft="10dp"
+        android:paddingLeft="30dp"
         android:paddingTop="25dp"
         android:paddingBottom="0dp"
         android:layout_weight="2">

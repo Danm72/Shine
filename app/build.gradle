@@ -42,7 +42,7 @@ dependencies {
     compile 'com.google.android.gms:play-services:5.2.08'
     compile 'com.github.johnkil.android-robototextview:robototextview:2.1.0'
     compile project(':HoloGraphLibrary')
-
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.0.+'
 }
 
 apt {

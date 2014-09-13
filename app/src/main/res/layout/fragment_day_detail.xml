@@ -2,23 +2,98 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
 
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:orientation="vertical">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2">
+
+        <pl.droidsonroids.gif.GifImageView
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/cloud2"
+            android:scaleType="fitXY" />
+    </LinearLayout>
 
     <com.devspark.robototextview.widget.RobotoTextView
         android:id="@+id/day_detail"
         style="?android:attr/textAppearanceLarge"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:padding="16dp"
+        android:text="Day"
+        android:gravity="center"
         android:textIsSelectable="true"
-        app:typeface="roboto_bold"
-        tools:context=".DayDetailFragment" />
+        app:typeface="roboto_light"
+        tools:context=".DayDetailFragment"
+        android:textAlignment="center" />
 
-    <com.echo.holographlibrary.LineGraph
-        android:id="@+id/linegraph"
-        android:layout_width="match_parent"
-        android:layout_height="200dp" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2">
+
+        <com.devspark.robototextview.widget.RobotoTextView
+            android:id="@+id/day_detail1"
+            style="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Day"
+            android:gravity="center"
+            android:textIsSelectable="true"
+            app:typeface="roboto_bold"
+            tools:context=".DayDetailFragment"
+            android:textAlignment="center" />
+
+
+        <com.devspark.robototextview.widget.RobotoTextView
+            android:id="@+id/day_detail2"
+            style="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Day"
+            android:gravity="center"
+            android:textIsSelectable="true"
+            app:typeface="roboto_bold"
+            tools:context=".DayDetailFragment"
+            android:textAlignment="center" />
+
+
+        <com.devspark.robototextview.widget.RobotoTextView
+            android:id="@+id/day_detail3"
+            style="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Day"
+            android:gravity="center"
+            android:textIsSelectable="true"
+            app:typeface="roboto_bold"
+            tools:context=".DayDetailFragment"
+            android:textAlignment="center" />
+
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:padding="5dp">
+
+        <com.echo.holographlibrary.BarGraph
+            android:id="@+id/graph"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent" />
+
+    </LinearLayout>
 
 </LinearLayout>

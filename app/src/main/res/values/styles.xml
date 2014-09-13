@@ -11,6 +11,7 @@
         <item name="actionModeBackground">@drawable/cab_background_top_shine_style</item>
         <item name="actionModeSplitBackground">@drawable/cab_background_bottom_shine_style</item>
         <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Shine_style</item>
+        <item name="actionBarTabTextStyle">@style/ActionBarTabText.Rosenormal</item>
 
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
         <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
@@ -54,7 +55,11 @@
     <style name="ActionBarTabStyle.Shine_style" parent="@style/Widget.AppCompat.Light.ActionBar.TabView">
         <item name="android:background">@drawable/tab_indicator_ab_shine_style</item>
     </style>
-	
+
+    <style name="ActionBarTabText.Rosenormal" parent="@style/Widget.AppCompat.Light.ActionBar.TabText">
+        <item name="android:textColor">#f00</item>
+    </style>
+
     <style name="DropDownNav.Shine_style" parent="@style/Widget.AppCompat.Light.Spinner.DropDown.ActionBar">
         <item name="android:background">@drawable/spinner_background_ab_shine_style</item>
         <item name="android:popupBackground">@drawable/menu_dropdown_panel_shine_style</item>

@@ -8,9 +8,7 @@ import android.widget.ListView;
 import com.danmalone.shine.adapters.DayListAdapter;
 import com.danmalone.shine.api.clients.OWMClient;
 import com.danmalone.shine.api.models.DailyModels.DailyForecast;
-
 import com.danmalone.shine.api.models.DailyModels.DailyWeather;
-import com.danmalone.shine.api.models.Forecast;
 import com.danmalone.shine.models.DayListModel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -82,7 +80,7 @@ public class DayListFragment extends Fragment {
         /**
          * Callback for when an item has been selected.
          */
-        public void onItemSelected(String id);
+        public void onItemSelected(String id, String location);
     }
 
     /**
@@ -91,7 +89,7 @@ public class DayListFragment extends Fragment {
      */
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
-        public void onItemSelected(String id) {
+        public void onItemSelected(String id, String location) {
         }
     };
 
@@ -125,8 +123,8 @@ public class DayListFragment extends Fragment {
 
 
     @ItemClick
-    void listItemClicked(DayListModel person) {
-        mCallbacks.onItemSelected(location);
+    void listItemClicked(DayListModel day) {
+        mCallbacks.onItemSelected(location, day.day);
     }
 
     @Override
@@ -186,7 +184,7 @@ public class DayListFragment extends Fragment {
 //        Forecast forecast = client.forcastWeatherAtCity(location);
         DailyForecast forecastDaily = null;
 
-        if(location != null) {
+        if (location != null) {
             forecastDaily = client.forecastWeatherAtCityDaily(location);
         }
 
@@ -204,10 +202,11 @@ public class DayListFragment extends Fragment {
             int day = cal.get(Calendar.DAY_OF_WEEK);
             DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
             String dayOfMonthStr = symbols.getWeekdays()[day];
-            double maxTmp = dailyForecast.getTemp().getMax();
+            int maxTmp = dailyForecast.getTemp().getMax().intValue();
+            int minTmp = dailyForecast.getTemp().getMin().intValue();
 
             int drawable = decideOnIcon(dailyForecast);
-            adapter.add(new DayListModel(dayOfMonthStr, maxTmp + "°", drawable));
+            adapter.add(new DayListModel(dayOfMonthStr, minTmp + "/"+ maxTmp+"°", drawable));
             adapter.notifyDataSetChanged();
         }
     }

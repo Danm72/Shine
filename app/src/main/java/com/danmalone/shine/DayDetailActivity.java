@@ -42,9 +42,10 @@ public class DayDetailActivity extends Activity {
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
-            String location = getIntent().getStringExtra(DayDetailFragment.ARG_ITEM_ID);
+            String location = getIntent().getStringExtra("Location");
+            String day = getIntent().getStringExtra("Day");
 
-            Fragment fragment = DayDetailFragment_.builder().location(location)
+            Fragment fragment = DayDetailFragment_.builder().location(location).day(day)
                     .build();
             getFragmentManager().beginTransaction()
                     .add(R.id.day_detail_container, fragment)
