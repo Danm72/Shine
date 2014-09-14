@@ -3,6 +3,7 @@ package com.danmalone.shine;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.widget.ListView;
 
 import com.danmalone.shine.adapters.DayListAdapter;
@@ -180,15 +181,16 @@ public class DayListFragment extends Fragment {
 
     @Background
     void attemptAPICall(OWMClient client, String location) {
-//        Weather weather = client.getCityWeather("Dublin, Ireland");
-//        Forecast forecast = client.forcastWeatherAtCity(location);
         DailyForecast forecastDaily = null;
 
         if (location != null) {
-            forecastDaily = client.forecastWeatherAtCityDaily(location);
+            try {
+                forecastDaily = client.forecastWeatherAtCityDaily(location);
+            }catch (Exception e){
+                Log.d("Shine","Swallowing due to poor API response");
+            }
         }
 
-//        forecastDaily.toString();
         updateView(forecastDaily);
     }
 
@@ -196,6 +198,9 @@ public class DayListFragment extends Fragment {
     void updateView(DailyForecast forecast) {
         Calendar cal = Calendar.getInstance();
 
+        if(forecast == null){
+            return;
+        }
         for (DailyWeather dailyForecast : forecast.getList()) {
             Date date = new Date(dailyForecast.getDt() * 1000L);
             cal.setTime(date);

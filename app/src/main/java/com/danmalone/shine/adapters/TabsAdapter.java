@@ -1,7 +1,6 @@
 package com.danmalone.shine.adapters;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
@@ -9,11 +8,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 
+import com.danmalone.shine.DayListActivity_;
 import com.danmalone.shine.DayListFragment_;
+import com.danmalone.shine.dao.AddressDAO;
+import com.j256.ormlite.dao.RuntimeExceptionDao;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by danmalone on 12/09/2014.
@@ -25,10 +30,10 @@ public class TabsAdapter extends FragmentPagerAdapter
     private final ViewPager mViewPager;
     private final ArrayList<TabInfo> mTabs = new ArrayList<TabInfo>();
 
-    static final class TabInfo {
+    public static final class TabInfo {
         private final Class<?> clss;
         private final Bundle args;
-        private final String name;
+        public final String name;
 
         TabInfo(Class<?> _class, String _name, Bundle _args) {
             clss = _class;
@@ -54,6 +59,7 @@ public class TabsAdapter extends FragmentPagerAdapter
         mActionBar.addTab(tab);
         notifyDataSetChanged();
     }
+
 
     @Override
     public int getCount() {
@@ -81,14 +87,23 @@ public class TabsAdapter extends FragmentPagerAdapter
     public void onPageScrollStateChanged(int state) {
     }
 
+    public TabInfo currentTab(int position){
+        return mTabs.get(position);
+    }
+
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
         Object tag = tab.getTag();
-        for (int i=0; i<mTabs.size(); i++) {
-            if (mTabs.get(i) == tag) {
+        for (int i = 0; i < mTabs.size(); i++) {
+            TabInfo tabInfo = mTabs.get(i);
+            if (tabInfo == tag) {
                 mViewPager.setCurrentItem(i);
             }
         }
+    }
+
+    public void removeItem(int position){
+        mTabs.remove(position);
     }
 
     @Override

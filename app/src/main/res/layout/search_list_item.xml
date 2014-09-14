@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="75dp"
+    android:paddingLeft="10dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:layout_weight="7"
+        >
+
+        <com.devspark.robototextview.widget.RobotoTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Ireland"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:typeface="roboto_slab_regular"
+            android:id="@+id/search_country_text" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:paddingTop="25dp"
+        android:paddingBottom="0dp"
+        android:layout_weight="2">
+
+        <com.devspark.robototextview.widget.RobotoTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            app:fontFamily="roboto"
+            app:textWeight="light"
+            app:textStyle="italic"
+            android:id="@+id/search_country_code" />
+    </LinearLayout>
+</LinearLayout>

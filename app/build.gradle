@@ -43,6 +43,7 @@ dependencies {
     compile 'com.github.johnkil.android-robototextview:robototextview:2.1.0'
     compile project(':HoloGraphLibrary')
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.0.+'
+    compile 'com.j256.ormlite:ormlite-android:4.48'
 }
 
 apt {

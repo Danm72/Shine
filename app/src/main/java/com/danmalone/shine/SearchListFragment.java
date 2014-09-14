@@ -1,19 +1,16 @@
 package com.danmalone.shine;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.location.Address;
+import android.os.Bundle;
 import android.widget.ListView;
 
-import com.danmalone.shine.adapters.DayListAdapter;
-import com.danmalone.shine.api.clients.OWMClient;
-import com.danmalone.shine.api.models.DailyModels.DailyForecast;
+import com.danmalone.shine.adapters.SearchListAdapter;
 import com.danmalone.shine.api.models.DailyModels.DailyWeather;
-import com.danmalone.shine.models.DayListModel;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
@@ -21,10 +18,7 @@ import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
-import java.text.DateFormatSymbols;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
+import java.util.List;
 
 import retrofit.RestAdapter;
 
@@ -46,7 +40,7 @@ public class SearchListFragment extends Fragment {
     ListView list;
 
     @Bean
-    DayListAdapter adapter;
+    SearchListAdapter adapter;
 
     @FragmentArg("query")
     String query;
@@ -78,7 +72,7 @@ public class SearchListFragment extends Fragment {
         /**
          * Callback for when an item has been selected.
          */
-        public void onItemSelected(String location);
+        public void onItemSelected(Address location);
     }
 
     /**
@@ -87,7 +81,7 @@ public class SearchListFragment extends Fragment {
      */
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
-        public void onItemSelected(String location) {
+        public void onItemSelected(Address location) {
         }
     };
 
@@ -109,15 +103,13 @@ public class SearchListFragment extends Fragment {
         list.setAdapter(adapter);
     }
 
-
     @AfterInject
     void test() {
     }
 
-
     @ItemClick
-    void listItemClicked(DayListModel day) {
-        mCallbacks.onItemSelected(day.day);
+    void listItemClicked(Address address) {
+        mCallbacks.onItemSelected(address);
     }
 
     @Override
@@ -171,51 +163,18 @@ public class SearchListFragment extends Fragment {
         mActivatedPosition = position;
     }
 
-    @Background
-    void attemptAPICall(OWMClient client, String location) {
-//        Weather weather = client.getCityWeather("Dublin, Ireland");
-//        Forecast forecast = client.forcastWeatherAtCity(location);
-        DailyForecast forecastDaily = null;
-
-        if (location != null) {
-            forecastDaily = client.forecastWeatherAtCityDaily(location);
-        }
-
-//        forecastDaily.toString();
-        updateView(forecastDaily);
-    }
-
     @UiThread
-    void updateView(DailyForecast forecast) {
-        Calendar cal = Calendar.getInstance();
-
-        for (DailyWeather dailyForecast : forecast.getList()) {
-            Date date = new Date(dailyForecast.getDt() * 1000L);
-            cal.setTime(date);
-            int day = cal.get(Calendar.DAY_OF_WEEK);
-            DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
-            String dayOfMonthStr = symbols.getWeekdays()[day];
-            int maxTmp = dailyForecast.getTemp().getMax().intValue();
-            int minTmp = dailyForecast.getTemp().getMin().intValue();
-
-            int drawable = decideOnIcon(dailyForecast);
-            adapter.add(new DayListModel(dayOfMonthStr, minTmp + "/" + maxTmp + "°", drawable));
-            adapter.notifyDataSetChanged();
-        }
+    void updateView(Address address) {
+        adapter.add(address);
+        adapter.notifyDataSetChanged();
     }
 
-    int decideOnIcon(DailyWeather forecast) {
-        double temp = forecast.getTemp().getMax();
-        int drawable;
-        if (temp > 20) {
-            String weather = forecast.getWeather().get(0).getMain();
-            if (weather.equals("Clear"))
-                drawable = R.drawable.sunny;
-            else
-                drawable = R.drawable.cloudy;
-        } else
-            drawable = R.drawable.haze;
-
-        return drawable;
+    void addToAdapter(List<Address> addressList) {
+        try {
+            for (Address address : addressList)
+                updateView(address);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
