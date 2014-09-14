@@ -21,15 +21,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <activity android:name=".SearchableActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
         </activity>
+
         <activity
             android:name=".DayDetailActivity_"
             android:label="@string/title_day_detail"
@@ -37,6 +32,15 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".DayListActivity" />
+        </activity>
+
+
+        <activity android:name=".SearchableActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
         </activity>
 
         <meta-data

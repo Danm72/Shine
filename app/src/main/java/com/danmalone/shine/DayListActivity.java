@@ -6,12 +6,13 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.widget.SearchView;
+import android.view.MenuItem;
 
 import com.danmalone.shine.adapters.TabsAdapter;
 
@@ -38,7 +39,7 @@ import org.androidannotations.annotations.ViewById;
  * to listen for item selections.
  */
 @EActivity(R.layout.activity_day_list)
-public class DayListActivity extends FragmentActivity
+public class DayListActivity extends ActionBarActivity
         implements DayListFragment.Callbacks {
 
     @ViewById
@@ -140,14 +141,16 @@ public class DayListActivity extends FragmentActivity
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
 
-/*
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
-*/
+
+        if (searchView != null) {
+            searchView.setSearchableInfo(
+                    searchManager.getSearchableInfo(getComponentName()));
+        }
 
         return true;
     }

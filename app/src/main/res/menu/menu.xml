@@ -1,25 +1,18 @@
-<!--
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
->    &lt;!&ndash; Search, should appear as action button &ndash;&gt;
+    xmlns:yourapp="http://schemas.android.com/apk/res-auto" >
     <item
         android:id="@+id/action_search"
         android:icon="@android:drawable/ic_menu_search"
         android:title="Search"
-        android:showAsAction="ifRoom" />
-    &lt;!&ndash; Settings, should always be in the overflow &ndash;&gt;
+        yourapp:actionViewClass="android.support.v7.widget.SearchView"
+        yourapp:showAsAction="always" />
+    <!-- Settings, should always be in the overflow -->
     <item
         android:id="@+id/action_settings"
         android:title="Settings"
-        android:showAsAction="never" />
-</menu>-->
-
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
->
-    <item
-        android:id="@+id/action_search"
-        android:icon="@android:drawable/ic_menu_search"
-        android:orderInCategory="1"
-        android:title="SEARCH"/>
+        yourapp:showAsAction="never"
+    />
 </menu>
+
