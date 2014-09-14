@@ -1,19 +1,23 @@
 package com.danmalone.shine;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.Fragment;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.widget.SearchView;
 
 import com.danmalone.shine.adapters.TabsAdapter;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
 
@@ -34,7 +38,6 @@ import org.androidannotations.annotations.ViewById;
  * to listen for item selections.
  */
 @EActivity(R.layout.activity_day_list)
-@OptionsMenu(R.menu.menu)
 public class DayListActivity extends FragmentActivity
         implements DayListFragment.Callbacks {
 
@@ -128,5 +131,24 @@ public class DayListActivity extends FragmentActivity
 
             startActivity(detailIntent);
         }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the options menu from XML
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+
+/*
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+*/
+
+        return true;
     }
 }

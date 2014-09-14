@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!-- File created by the Android Action Bar Style Generator
+<?xml version="1.0" encoding="utf-8"?>
+<!-- File created by the Android Action Bar Style Generator
 
      Copyright (C) 2011 The Android Open Source Project
      Copyright (C) 2012 readyState Software Ltd
@@ -19,13 +20,12 @@
 <resources>
 
     <style name="Theme.Shine_style" parent="@android:style/Theme.Holo.Light">
-        <item name="android:actionBarItemBackground">@drawable/selectable_background_shine_style
-        </item>
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_shine_style</item>
         <item name="android:popupMenuStyle">@style/PopupMenu.Shine_style</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Shine_style</item>
         <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Shine_style</item>
         <item name="android:actionDropDownStyle">@style/DropDownNav.Shine_style</item>
-        <item name="android:actionBarStyle">@style/ActionBar.Shine_style</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Shine_style</item>
         <item name="android:actionModeBackground">@drawable/cab_background_top_shine_style</item>
         <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_shine_style</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Shine_style</item>
@@ -33,17 +33,17 @@
 
     </style>
 
-    <style name="ActionBarTabText.Rosenormal" parent="@style/Widget.AppCompat.Light.ActionBar.TabText">
+    <style name="ActionBarTabText.Rosenormal" parent="android:style/Widget.Holo.Light.ActionBar.TabText">
         <item name="android:fontFamily">sans-serif-condensed</item>
         <item name="android:textColor">#ef2471ed</item>
     </style>
 
-    <style name="ActionBar.Shine_style" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:titleTextStyle">@style/MyTheme.ActionBar.TitleTextStyle</item>
+    <style name="ActionBar.Solid.Shine_style" parent="@android:style/Widget.Holo.Light.ActionBar.Solid">
         <item name="android:background">@drawable/ab_solid_shine_style</item>
         <item name="android:backgroundStacked">@drawable/ab_stacked_solid_shine_style</item>
         <item name="android:backgroundSplit">@drawable/ab_bottom_solid_shine_style</item>
         <item name="android:progressBarStyle">@style/ProgressBar.Shine_style</item>
+        <item name="android:titleTextStyle">@style/MyTheme.ActionBar.TitleTextStyle</item>
     </style>
 
     <style name="MyTheme.ActionBar.TitleTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
@@ -55,8 +55,34 @@
         <item name="android:progressBarStyle">@style/ProgressBar.Shine_style</item>
     </style>
 
+    <style name="PopupMenu.Shine_style" parent="@android:style/Widget.Holo.Light.ListPopupWindow">
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_shine_style</item>	
+    </style>
+
+    <style name="DropDownListView.Shine_style" parent="@android:style/Widget.Holo.Light.ListView.DropDown">
+        <item name="android:listSelector">@drawable/selectable_background_shine_style</item>
+    </style>
+
+    <style name="ActionBarTabStyle.Shine_style" parent="@android:style/Widget.Holo.Light.ActionBar.TabView">
+        <item name="android:background">@drawable/tab_indicator_ab_shine_style</item>
+    </style>
+
+    <style name="DropDownNav.Shine_style" parent="@android:style/Widget.Holo.Light.Spinner">
+        <item name="android:background">@drawable/spinner_background_ab_shine_style</item>
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_shine_style</item>
+        <item name="android:dropDownSelector">@drawable/selectable_background_shine_style</item>
+    </style>
+    
+    <style name="ProgressBar.Shine_style" parent="@android:style/Widget.Holo.Light.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progress_horizontal_shine_style</item>
+    </style>
+    
+    <style name="ActionButton.CloseMode.Shine_style" parent="@android:style/Widget.Holo.Light.ActionButton.CloseMode">
+        <item name="android:background">@drawable/btn_cab_done_shine_style</item>
+    </style>
+
     <!-- this style is only referenced in a Light.DarkActionBar based theme -->
-    <style name="Theme.Shine_style.Widget" parent="@style/Theme.AppCompat">
+    <style name="Theme.Shine_style.Widget" parent="@android:style/Theme.Holo">
         <item name="android:popupMenuStyle">@style/PopupMenu.Shine_style</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Shine_style</item>
     </style>
