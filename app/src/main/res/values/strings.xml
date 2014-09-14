@@ -3,5 +3,6 @@
 
     <string name="app_name">Shine</string>
     <string name="title_day_detail">Day Detail</string>
+    <string name="search_hint">City Name…</string>
 
 </resources>

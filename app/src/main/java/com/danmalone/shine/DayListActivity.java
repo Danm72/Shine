@@ -1,11 +1,12 @@
 package com.danmalone.shine;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 
 import com.danmalone.shine.adapters.TabsAdapter;
 
@@ -34,7 +35,7 @@ import org.androidannotations.annotations.ViewById;
  */
 @EActivity(R.layout.activity_day_list)
 @OptionsMenu(R.menu.menu)
-public class DayListActivity extends ActionBarActivity
+public class DayListActivity extends FragmentActivity
         implements DayListFragment.Callbacks {
 
     @ViewById
@@ -70,7 +71,13 @@ public class DayListActivity extends ActionBarActivity
 
     @AfterInject
     void afterInj() {
+       /* final boolean customTitleSupported =
+                requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 
+        if (customTitleSupported) {
+            getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
+                    R.layout.titlebar);
+        }*/
     }
 
     @AfterViews

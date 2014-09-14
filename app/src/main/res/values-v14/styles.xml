@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?><!-- File created by the Android Action Bar Style Generator
+
+     Copyright (C) 2011 The Android Open Source Project
+     Copyright (C) 2012 readyState Software Ltd
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<resources>
+
+    <style name="Theme.Shine_style" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_shine_style
+        </item>
+        <item name="android:popupMenuStyle">@style/PopupMenu.Shine_style</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Shine_style</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Shine_style</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav.Shine_style</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Shine_style</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_shine_style</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_shine_style</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Shine_style</item>
+        <item name="android:actionBarTabTextStyle">@style/ActionBarTabText.Rosenormal</item>
+
+    </style>
+
+    <style name="ActionBarTabText.Rosenormal" parent="@style/Widget.AppCompat.Light.ActionBar.TabText">
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textColor">#ef2471ed</item>
+    </style>
+
+    <style name="ActionBar.Shine_style" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:titleTextStyle">@style/MyTheme.ActionBar.TitleTextStyle</item>
+        <item name="android:background">@drawable/ab_solid_shine_style</item>
+        <item name="android:backgroundStacked">@drawable/ab_stacked_solid_shine_style</item>
+        <item name="android:backgroundSplit">@drawable/ab_bottom_solid_shine_style</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Shine_style</item>
+    </style>
+
+    <style name="MyTheme.ActionBar.TitleTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="ActionBar.Transparent.Shine_style" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@drawable/ab_transparent_shine_style</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Shine_style</item>
+    </style>
+
+    <!-- this style is only referenced in a Light.DarkActionBar based theme -->
+    <style name="Theme.Shine_style.Widget" parent="@style/Theme.AppCompat">
+        <item name="android:popupMenuStyle">@style/PopupMenu.Shine_style</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Shine_style</item>
+    </style>
+
+</resources>

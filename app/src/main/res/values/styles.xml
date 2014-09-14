@@ -30,12 +30,6 @@
         <item name="backgroundStacked">@drawable/ab_stacked_solid_shine_style</item>
         <item name="backgroundSplit">@drawable/ab_bottom_solid_shine_style</item>
         <item name="progressBarStyle">@style/ProgressBar.Shine_style</item>
-        <item name="android:titleTextStyle">@style/ActionBar.Text</item>
-    </style>
-
-    <style name="ActionBar.Text"
-     parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textColor">#FFFFFF</item>
     </style>
 
     <style name="ActionBar.Transparent.Shine_style" parent="@style/Widget.AppCompat.Light.ActionBar">
