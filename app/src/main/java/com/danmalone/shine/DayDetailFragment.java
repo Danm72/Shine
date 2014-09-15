@@ -94,7 +94,7 @@ public class DayDetailFragment extends Fragment {
                 .setEndpoint(BASE_URL)
                 .build();
 
-        restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
+//        restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
 
         client = restAdapter.create(OWMClient.class);
         days = new LinkedList<Reading>();
