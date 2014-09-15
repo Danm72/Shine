@@ -71,37 +71,12 @@ public class DayListActivity extends FragmentActivity
     @OptionsMenuItem(R.id.action_dismiss)
     MenuItem action_dismiss;
 
-    @OptionsItem
-    void action_dismiss() {
-        int currentItem = pager.getCurrentItem();
-        String name = mTabsAdapter.currentTab(currentItem).name.split(",")[0];
-        RuntimeExceptionDao<AddressDAO, Integer> simpleDataDao = ((DayListActivity_) this).dbHelper.getSimpleDataDao();
-        QueryBuilder<AddressDAO, Integer> queryBuilder =
-                simpleDataDao.queryBuilder();
-        PreparedQuery<AddressDAO> preparedQuery = null;
-
-        try {
-            queryBuilder.where().eq(AddressDAO.ADDRESS_NAME, name);
-            preparedQuery = queryBuilder.prepare();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        List<AddressDAO> accountList = simpleDataDao.query(preparedQuery);
-        simpleDataDao.delete(accountList.get(0));
-        mTabsAdapter.removeItem(currentItem);
-        mTabsAdapter.notifyDataSetChanged();
-        pager.setAdapter(mTabsAdapter);
-    }
-
     @ViewById
     ViewPager pager;
     TabsAdapter mTabsAdapter;
 
     SearchCursor cursorAdapter;
     ActionBar bar;
-
-/*    @OrmLiteDao(helper = DatabaseHelper.class, model = AddressDAO.class)
-    AddressDAO userDao;*/
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -122,9 +97,9 @@ public class DayListActivity extends FragmentActivity
 
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
-            ((DayListFragment_) getSupportFragmentManager()
-                    .findFragmentById(R.id.day_list))
-                    .setActivateOnItemClick(true);
+//            ((DayListFragment_) getSupportFragmentManager()
+//                    .findFragmentById(R.id.day_list))
+//                    .setActivateOnItemClick(true);
         }
 
         // TODO: If exposing deep links into your app, handle intents here.
@@ -132,17 +107,15 @@ public class DayListActivity extends FragmentActivity
 
     @AfterInject
     void afterInj() {
-       /* final boolean customTitleSupported =
-                requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 
-        if (customTitleSupported) {
-            getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
-                    R.layout.titlebar);
-        }*/
     }
 
     @AfterViews
     void afterV() {
+        if (findViewById(R.id.day_detail_container) != null) {
+            mTwoPane = true;
+        }
+
         bar = getActionBar();
         bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 //        bar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
@@ -169,6 +142,28 @@ public class DayListActivity extends FragmentActivity
         }
 
         refreshTabs();
+    }
+
+    @OptionsItem
+    void action_dismiss() {
+        int currentItem = pager.getCurrentItem();
+        String name = mTabsAdapter.currentTab(currentItem).name.split(",")[0];
+        RuntimeExceptionDao<AddressDAO, Integer> simpleDataDao = ((DayListActivity_) this).dbHelper.getSimpleDataDao();
+        QueryBuilder<AddressDAO, Integer> queryBuilder =
+                simpleDataDao.queryBuilder();
+        PreparedQuery<AddressDAO> preparedQuery = null;
+
+        try {
+            queryBuilder.where().eq(AddressDAO.ADDRESS_NAME, name);
+            preparedQuery = queryBuilder.prepare();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        List<AddressDAO> accountList = simpleDataDao.query(preparedQuery);
+        simpleDataDao.delete(accountList.get(0));
+        mTabsAdapter.removeItem(currentItem);
+        mTabsAdapter.notifyDataSetChanged();
+        pager.setAdapter(mTabsAdapter);
     }
 
     private void refreshTabs() {

@@ -15,9 +15,9 @@
         android:title="dismiss"
         android:showAsAction="always"
         android:icon="@android:drawable/ic_menu_close_clear_cancel"/>
-    <item
+<!--    <item
         android:id="@+id/action_settings"
         myapp:showAsAction="never"
-        android:title="Settings" />
+        android:title="Settings" />-->
 
 </menu>

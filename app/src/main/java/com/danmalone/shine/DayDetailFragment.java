@@ -52,6 +52,18 @@ public class DayDetailFragment extends Fragment {
     @ViewById
     BarGraph graph;
 
+    @ViewById(R.id.day_wind)
+    TextView wind;
+
+    @ViewById(R.id.day_description)
+    TextView description;
+
+    @ViewById(R.id.day_humidity)
+    TextView humidity;
+
+    @ViewById(R.id.day_pressure)
+    TextView pressure;
+
     ArrayList<Bar> points = new ArrayList<Bar>();
 
     List<Reading> days;
@@ -112,6 +124,7 @@ public class DayDetailFragment extends Fragment {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+        setGeneralStats(forecast.getList().get(0));
         for (DetailedForecast dailyForecast : forecast.getList()) {
             Date date = null;
             try {
@@ -139,6 +152,13 @@ public class DayDetailFragment extends Fragment {
             points.add(bar);
         }
         graph.setBars(points);
+    }
+
+    private void setGeneralStats(DetailedForecast general) {
+        description.setText(general.getWeather().get(0).getDescription());
+        humidity.setText("Humidity: "+ general.getMain().getHumidity());
+        wind.setText("Speed: " + general.getWind().getSpeed());
+        pressure.setText("Pressure: "+general.getMain().getPressure());
     }
 
     private class Reading {
