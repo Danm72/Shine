@@ -18,7 +18,6 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -70,6 +69,9 @@ public class DayListActivity extends FragmentActivity
 
     @OptionsMenuItem(R.id.action_dismiss)
     MenuItem action_dismiss;
+
+    @OptionsMenuItem(R.id.action_refresh)
+    MenuItem action_refresh;
 
     @ViewById
     ViewPager pager;
@@ -149,6 +151,15 @@ public class DayListActivity extends FragmentActivity
         int currentItem = pager.getCurrentItem();
         String name = mTabsAdapter.currentTab(currentItem).name.split(",")[0];
         RuntimeExceptionDao<AddressDAO, Integer> simpleDataDao = ((DayListActivity_) this).dbHelper.getSimpleDataDao();
+        PreparedQuery<AddressDAO> preparedQuery = queryForAddress(name, simpleDataDao);
+        List<AddressDAO> accountList = simpleDataDao.query(preparedQuery);
+        simpleDataDao.delete(accountList.get(0));
+        mTabsAdapter.removeItem(currentItem);
+        mTabsAdapter.notifyDataSetChanged();
+        bar.removeTabAt(currentItem);
+    }
+
+    private PreparedQuery<AddressDAO> queryForAddress(String name, RuntimeExceptionDao<AddressDAO, Integer> simpleDataDao) {
         QueryBuilder<AddressDAO, Integer> queryBuilder =
                 simpleDataDao.queryBuilder();
         PreparedQuery<AddressDAO> preparedQuery = null;
@@ -159,12 +170,9 @@ public class DayListActivity extends FragmentActivity
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        List<AddressDAO> accountList = simpleDataDao.query(preparedQuery);
-        simpleDataDao.delete(accountList.get(0));
-        mTabsAdapter.removeItem(currentItem);
-        mTabsAdapter.notifyDataSetChanged();
-        pager.setAdapter(mTabsAdapter);
+        return preparedQuery;
     }
+
 
     private void refreshTabs() {
         RuntimeExceptionDao<AddressDAO, Integer> simpleDataDao = dbHelper.getSimpleDataDao();
@@ -179,6 +187,15 @@ public class DayListActivity extends FragmentActivity
         pager.setOffscreenPageLimit(4);
 
         pager.setAdapter(mTabsAdapter);
+        pager.invalidate();
+    }
+
+    @OptionsItem
+    void action_refresh() {
+        pager.setAdapter(null);
+        bar.removeAllTabs();
+        mTabsAdapter = new TabsAdapter(this, pager);
+        refreshTabs();
     }
 
     /**

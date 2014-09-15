@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import com.danmalone.shine.DayListActivity_;
@@ -23,7 +24,7 @@ import java.util.List;
 /**
  * Created by danmalone on 12/09/2014.
  */
-public class TabsAdapter extends FragmentPagerAdapter
+public class TabsAdapter extends FragmentStatePagerAdapter
         implements ActionBar.TabListener, ViewPager.OnPageChangeListener {
     private final Context mContext;
     private final ActionBar mActionBar;
@@ -72,6 +73,10 @@ public class TabsAdapter extends FragmentPagerAdapter
 
         return DayListFragment_.builder().location(info.name)
                 .build();
+    }
+
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
     }
 
     @Override

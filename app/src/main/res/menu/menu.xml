@@ -15,9 +15,11 @@
         android:title="dismiss"
         android:showAsAction="always"
         android:icon="@android:drawable/ic_menu_close_clear_cancel"/>
-<!--    <item
-        android:id="@+id/action_settings"
-        myapp:showAsAction="never"
-        android:title="Settings" />-->
+    <item
+        android:id="@+id/action_refresh"
+        myapp:showAsAction="ifRoom"
+        android:title="Refresh"
+        android:icon="@android:drawable/ic_menu_rotate"/>
+    android:title="Settings" />
 
 </menu>
