@@ -2,7 +2,6 @@
 package com.danmalone.shine.api.models.wunder.hourly;
 
 
-import com.danmalone.shine.api.models.Temp;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

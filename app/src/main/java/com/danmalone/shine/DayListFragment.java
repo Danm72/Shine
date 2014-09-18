@@ -7,9 +7,9 @@ import android.util.Log;
 import android.widget.ListView;
 
 import com.danmalone.shine.adapters.DayListAdapter;
-import com.danmalone.shine.api.clients.OWMClient;
-import com.danmalone.shine.api.models.DailyModels.DailyForecast;
-import com.danmalone.shine.api.models.DailyModels.DailyWeather;
+import com.danmalone.shine.api.clients.WunderClient;
+import com.danmalone.shine.api.models.wunder.daily.Forecastday_;
+import com.danmalone.shine.api.models.wunder.daily.TenDay;
 import com.danmalone.shine.models.DayListModel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -22,14 +22,11 @@ import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
-import java.text.DateFormatSymbols;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-
 import retrofit.RestAdapter;
 
-import static com.danmalone.shine.api.clients.OWMClient.BASE_URL;
+import static com.danmalone.shine.api.clients.WunderClient.API_KEY;
+import static com.danmalone.shine.api.clients.WunderClient.BASE_URL;
+import static java.lang.String.valueOf;
 
 /**
  * A list fragment representing a list of Days. This fragment
@@ -43,7 +40,7 @@ import static com.danmalone.shine.api.clients.OWMClient.BASE_URL;
 @EFragment(R.layout.day_list)
 public class DayListFragment extends Fragment {
 
-    OWMClient client;
+    WunderClient wunder;
 
     @ViewById
     ListView list;
@@ -51,8 +48,11 @@ public class DayListFragment extends Fragment {
     @Bean
     DayListAdapter adapter;
 
-    @FragmentArg("location")
-    String location;
+    @FragmentArg("countyCode")
+    String countryCode;
+
+    @FragmentArg("countryName")
+    String countryName;
 
 
     /**
@@ -104,15 +104,15 @@ public class DayListFragment extends Fragment {
     @AfterViews
     void bindAdapter() {
         RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(BASE_URL)
+                .setEndpoint(BASE_URL + API_KEY)
                 .build();
 
         restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
 
-        client = restAdapter.create(OWMClient.class);
+        wunder = restAdapter.create(WunderClient.class);
 
-        if (location != null)
-            attemptAPICall(client, location);
+        if (countryName != null)
+            attemptAPICall(wunder, countryName, countryCode);
 
         list.setAdapter(adapter);
     }
@@ -124,8 +124,8 @@ public class DayListFragment extends Fragment {
 
 
     @ItemClick
-    void listItemClicked(DayListModel day) {
-        mCallbacks.onItemSelected(location, day.day);
+    void listItemClicked() {
+        mCallbacks.onItemSelected(countryName, countryCode);
     }
 
     @Override
@@ -180,54 +180,47 @@ public class DayListFragment extends Fragment {
     }
 
     @Background
-    void attemptAPICall(OWMClient client, String location) {
-        DailyForecast forecastDaily = null;
+    void attemptAPICall(WunderClient client, String countryName, String countryCode) {
+        TenDay forecastDaily = null;
 
-        if (location != null) {
-            try {
-                forecastDaily = client.forecastWeatherAtCityDaily(location);
-            }catch (Exception e){
-                Log.d("Shine","Swallowing due to poor API response");
-            }
+        try {
+            forecastDaily = client.getTenDayForecast(countryCode, countryName);
+        } catch (Exception e) {
+            Log.d("Shine", "Swallowing due to poor API response");
         }
+
 
         updateView(forecastDaily);
     }
 
     @UiThread
-    void updateView(DailyForecast forecast) {
-        Calendar cal = Calendar.getInstance();
+    void updateView(TenDay forecast) {
+        for (Forecastday_ dailyForecast : forecast.getForecast().getSimpleforecast().getForecastday()) {
 
-        if(forecast == null){
-            return;
-        }
-        for (DailyWeather dailyForecast : forecast.getList()) {
-            Date date = new Date(dailyForecast.getDt() * 1000L);
-            cal.setTime(date);
-            int day = cal.get(Calendar.DAY_OF_WEEK);
-            DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
-            String dayOfMonthStr = symbols.getWeekdays()[day];
-            int maxTmp = dailyForecast.getTemp().getMax().intValue();
-            int minTmp = dailyForecast.getTemp().getMin().intValue();
+            String maxTmp = dailyForecast.getHigh().getCelsius();
+            String minTmp = dailyForecast.getLow().getCelsius();
 
-            int drawable = decideOnIcon(dailyForecast);
-            adapter.add(new DayListModel(dayOfMonthStr, minTmp + "/"+ maxTmp+"°", drawable));
+            int drawable = decideOnIcon(dailyForecast.getIcon());
+            String weekday = dailyForecast.getDate().getWeekday();
+            adapter.add(new DayListModel(weekday, minTmp + "/" + maxTmp + "°", drawable));
             adapter.notifyDataSetChanged();
         }
     }
 
-    int decideOnIcon(DailyWeather forecast) {
-        double temp = forecast.getTemp().getMax();
-        int drawable;
-        if (temp > 20) {
-            String weather = forecast.getWeather().get(0).getMain();
-            if (weather.equals("Clear"))
-                drawable = R.drawable.sunny;
-            else
-                drawable = R.drawable.cloudy;
-        } else
-            drawable = R.drawable.haze;
+    int decideOnIcon(String forecast) {
+        switch (valueOf(forecast)) {
+            case "partlycloudy":
+                return R.drawable.haze;
+            case "cloudy":
+                return R.drawable.cloudy;
+            case "mostlycloudy":
+                return R.drawable.cloudy;
+            case "chancerain":
+                break;
+            case "clear":
+                return R.drawable.sunny;
+        }
 
-        return drawable;
+        return R.drawable.sunny;
     }
 }

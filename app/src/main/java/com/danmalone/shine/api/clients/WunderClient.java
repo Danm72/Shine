@@ -1,6 +1,6 @@
 package com.danmalone.shine.api.clients;
 
-import com.danmalone.shine.api.models.Weather;
+import com.danmalone.shine.api.models.wunder.daily.Forecast;
 import com.danmalone.shine.api.models.wunder.daily.TenDay;
 import com.danmalone.shine.api.models.wunder.hourly.Hourly;
 
@@ -18,15 +18,15 @@ public interface WunderClient {
 //    http://api.wunderground.com/api/69103a86f0c5ade6/forecast/q/CA/San_Francisco.json
 
     @GET("/forecast/q/{country}/{city}.json")
-    Weather getThreeDayForecast(@Path("country") String country, @Path("city") String city);
+    Forecast getThreeDayForecast(@Path("country") String country, @Path("city") String city);
 
 
     @GET("/forecast10day/q/{country}/{city}.json")
     TenDay getTenDayForecast(@Path("country") String country, @Path("city") String city);
 
 //    http://api.wunderground.com/api/69103a86f0c5ade6/conditions/q/CA/San_Francisco.json
-    @GET("/conditions/q/{country}/{city}.json")
-    com.danmalone.shine.api.models.ForecastModels.Forecast conditions(@Path("country") String country, @Path("city") String city);
+//    @GET("/conditions/q/{country}/{city}.json")
+//    Conditions conditions(@Path("country") String country, @Path("city") String city);
 
 //    http://api.wunderground.com/api/69103a86f0c5ade6/hourly/q/CA/San_Francisco.json
     @GET("/hourly/q/{country}/{city}.json")

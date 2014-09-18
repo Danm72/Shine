@@ -6,6 +6,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.danmalone.shine.R;
+import com.squareup.picasso.Picasso;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
@@ -36,6 +37,7 @@ public class DayListView extends LinearLayout {
         daylist_weather_text.setText(model.day);
         daylist_weather_degree.setText(model.daylist_weather_degree);
         daylist_weather_icon.setImageDrawable(context.getResources().getDrawable(model.imgResource));
+//        Picasso.with(context).load(model.imgResource).into(daylist_weather_icon);
     }
 
 }

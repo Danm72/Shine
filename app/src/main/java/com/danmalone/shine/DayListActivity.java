@@ -139,8 +139,8 @@ public class DayListActivity extends FragmentActivity
 
             simpleDataDao.createIfNotExists(new AddressDAO("Dublin", "IE", "Ireland"));
             simpleDataDao.createIfNotExists(new AddressDAO("Barcelona", "ES", "Spain"));
-            simpleDataDao.createIfNotExists(new AddressDAO("New York", "US", "America"));
-            simpleDataDao.createIfNotExists(new AddressDAO("London", "GB", "United Kingdom"));
+//            simpleDataDao.createIfNotExists(new AddressDAO("NY/New York", "US", "America"));
+            simpleDataDao.createIfNotExists(new AddressDAO("London", "UK", "United Kingdom"));
         }
 
         refreshTabs();
@@ -181,7 +181,7 @@ public class DayListActivity extends FragmentActivity
 
         for (AddressDAO address : addy) {
             mTabsAdapter.addTab(bar.newTab().setText(address.getCountry()),
-                    DayListFragment_.class, address.getCountry() + "," + address.getCode(), null);
+                    DayListFragment_.class, address.getCode(), address.getCountry(),null);
         }
 
         pager.setOffscreenPageLimit(4);
@@ -203,13 +203,13 @@ public class DayListActivity extends FragmentActivity
      * indicating that the item with the given ID was selected.
      */
     @Override
-    public void onItemSelected(String location, String day) {
+    public void onItemSelected(String location, String countryCode) {
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
 
-            Fragment fragment = DayDetailFragment_.builder().location(location).day(day).build();
+            Fragment fragment = DayDetailFragment_.builder().countryCode(location).countryCode(countryCode).build();
 
             getFragmentManager().beginTransaction()
                     .replace(R.id.day_detail_container, fragment)
@@ -220,7 +220,7 @@ public class DayListActivity extends FragmentActivity
             // for the selected item ID.
             Intent detailIntent = new Intent(this, DayDetailActivity_.class);
             detailIntent.putExtra("Location", location);
-            detailIntent.putExtra("Day", day);
+            detailIntent.putExtra("Day", countryCode);
 
             startActivity(detailIntent);
         }
@@ -319,7 +319,7 @@ public class DayListActivity extends FragmentActivity
     public void onItemSelected(Address location) {
         dbHelper.getSimpleDataDao().createIfNotExists(new AddressDAO(location.getFeatureName(), location.getCountryCode(), location.getCountryName()));
         mTabsAdapter.addTab(bar.newTab().setText(location.getFeatureName()),
-                DayListFragment_.class, location.getCountryName() + "," + location.getCountryCode(), null);
+                DayListFragment_.class, location.getCountryCode(), location.getCountryName(),null);
         mTabsAdapter.notifyDataSetChanged();
 
     }
