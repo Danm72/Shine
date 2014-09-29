@@ -45,7 +45,7 @@ public class DayDetailActivity extends Activity {
             String location = getIntent().getStringExtra("Location");
             String day = getIntent().getStringExtra("Day");
 
-            Fragment fragment = DayDetailFragment_.builder().location(location).day(day)
+            Fragment fragment = DayDetailFragment_.builder().countryName(location).countryCode(day)
                     .build();
             getFragmentManager().beginTransaction()
                     .add(R.id.day_detail_container, fragment)

@@ -6,20 +6,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 
-import com.danmalone.shine.DayListActivity_;
 import com.danmalone.shine.DayListFragment_;
-import com.danmalone.shine.dao.AddressDAO;
-import com.j256.ormlite.dao.RuntimeExceptionDao;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by danmalone on 12/09/2014.
@@ -35,9 +27,11 @@ public class TabsAdapter extends FragmentStatePagerAdapter
         private final Class<?> clss;
         private final Bundle args;
         public final String name;
+        public final String code;
 
-        TabInfo(Class<?> _class, String _name, Bundle _args) {
+        TabInfo(Class<?> _class, String _name, String code, Bundle _args) {
             clss = _class;
+            this.code = code;
             args = _args;
             name = _name;
         }
@@ -52,8 +46,8 @@ public class TabsAdapter extends FragmentStatePagerAdapter
         mViewPager.setOnPageChangeListener(this);
     }
 
-    public void addTab(ActionBar.Tab tab, Class<?> clss, String name, Bundle args) {
-        TabInfo info = new TabInfo(clss, name, args);
+    public void addTab(ActionBar.Tab tab, Class<?> clss, String name,String code, Bundle args) {
+        TabInfo info = new TabInfo(clss, name,code, args);
         tab.setTag(info);
         tab.setTabListener(this);
         mTabs.add(info);
@@ -71,7 +65,7 @@ public class TabsAdapter extends FragmentStatePagerAdapter
     public Fragment getItem(int position) {
         TabInfo info = mTabs.get(position);
 
-        return DayListFragment_.builder().location(info.name)
+        return DayListFragment_.builder().countryCode(info.name).countryName(info.code)
                 .build();
     }
 
@@ -92,7 +86,7 @@ public class TabsAdapter extends FragmentStatePagerAdapter
     public void onPageScrollStateChanged(int state) {
     }
 
-    public TabInfo currentTab(int position){
+    public TabInfo currentTab(int position) {
         return mTabs.get(position);
     }
 
@@ -107,7 +101,7 @@ public class TabsAdapter extends FragmentStatePagerAdapter
         }
     }
 
-    public void removeItem(int position){
+    public void removeItem(int position) {
         mTabs.remove(position);
     }
 

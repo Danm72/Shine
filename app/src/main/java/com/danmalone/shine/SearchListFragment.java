@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.widget.ListView;
 
 import com.danmalone.shine.adapters.SearchListAdapter;
-import com.danmalone.shine.api.models.DailyModels.DailyWeather;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -22,7 +21,6 @@ import java.util.List;
 
 import retrofit.RestAdapter;
 
-import static com.danmalone.shine.api.clients.OWMClient.BASE_URL;
 
 /**
  * A list fragment representing a list of Days. This fragment
@@ -94,11 +92,11 @@ public class SearchListFragment extends Fragment {
 
     @AfterViews
     void bindAdapter() {
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(BASE_URL)
+       /* RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint(W)
                 .build();
 
-        restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
+        restAdapter.setLogLevel(RestAdapter.LogLevel.FULL)*/;
 
         list.setAdapter(adapter);
     }

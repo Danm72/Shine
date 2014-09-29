@@ -2,14 +2,20 @@ package com.danmalone.shine;
 
 import android.app.Fragment;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.Paint;
 import android.widget.TextView;
 
-import com.danmalone.shine.api.clients.OWMClient;
-import com.danmalone.shine.api.models.ForecastModels.DetailedForecast;
-import com.danmalone.shine.api.models.ForecastModels.Forecast;
-import com.danmalone.shine.dummy.DummyContent;
-import com.echo.holographlibrary.Bar;
-import com.echo.holographlibrary.BarGraph;
+import com.danmalone.shine.api.clients.WunderClient;
+import com.danmalone.shine.api.models.wunder.hourly.Hourly;
+import com.danmalone.shine.api.models.wunder.hourly.HourlyForecast;
+import com.db.chart.Tools;
+import com.db.chart.model.LineSet;
+import com.db.chart.model.Point;
+import com.db.chart.view.LineChartView;
+import com.db.chart.view.animation.Animation;
+import com.db.chart.view.animation.easing.bounce.BounceEaseOut;
+import com.db.chart.view.animation.easing.quint.QuintEaseOut;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -19,19 +25,16 @@ import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
-import java.text.DateFormatSymbols;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
+import java.util.Random;
 
 import retrofit.RestAdapter;
 
-import static com.danmalone.shine.api.clients.OWMClient.BASE_URL;
+import static com.danmalone.shine.api.clients.WunderClient.API_KEY;
+import static com.danmalone.shine.api.clients.WunderClient.BASE_URL;
 
 /**
  * A fragment representing a single Day detail screen.
@@ -49,37 +52,34 @@ public class DayDetailFragment extends Fragment {
     @ViewById
     TextView day_detail;
 
-    @ViewById
-    BarGraph graph;
+    @ViewById(R.id.graph)
+    LineChartView graph;
 
-    @ViewById(R.id.day_wind)
+    @ViewById(R.id.day_wind_val)
     TextView wind;
 
-    @ViewById(R.id.day_description)
+    @ViewById(R.id.day_description_val)
     TextView description;
 
-    @ViewById(R.id.day_humidity)
+    @ViewById(R.id.day_humidity_val)
     TextView humidity;
 
-    @ViewById(R.id.day_pressure)
+    @ViewById(R.id.day_pressure_val)
     TextView pressure;
-
-    ArrayList<Bar> points = new ArrayList<Bar>();
 
     List<Reading> days;
 
-    OWMClient client;
+    @FragmentArg("countryName")
+    String countryName;
 
-    @FragmentArg("location")
-    String location;
+    @FragmentArg("countryCode")
+    String countryCode;
 
-    @FragmentArg("day")
-    String day;
+    WunderClient client;
 
     /**
      * The dummy content this fragment is presenting.
      */
-    private DummyContent.DummyItem mItem;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -91,12 +91,12 @@ public class DayDetailFragment extends Fragment {
     @AfterInject
     void calledAfterInjection() {
         RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(BASE_URL)
+                .setEndpoint(BASE_URL + API_KEY)
                 .build();
 
 //        restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
 
-        client = restAdapter.create(OWMClient.class);
+        client = restAdapter.create(WunderClient.class);
         days = new LinkedList<Reading>();
 
         attemptAPICall(client);
@@ -104,74 +104,149 @@ public class DayDetailFragment extends Fragment {
 
     @AfterViews
     void calledAfterViewInjection() {
-        getActivity().getActionBar().setTitle(location.split(",")[0]);
+        getActivity().getActionBar().setTitle(countryName);
     }
 
-    @Background
-    void attemptAPICall(OWMClient client) {
-//        Weather weather = client.getCityWeather("Dublin, Ireland");
-        Forecast forecast = null;
+    Comparator<Reading> comparator = new Comparator<Reading>() {
 
-        if (location != null)
-            forecast = client.forcastWeatherAtCity(location);
+        @Override
+        public int compare(final Reading o1, final Reading o2) {
+            // let your comparator look up your car's color in the custom order
+            return Integer.valueOf(o1.hour)
+                    .compareTo(Integer.valueOf(o2.hour));
+        }
+    };
+
+
+    @Background
+    void attemptAPICall(WunderClient client) {
+//        Weather weather = client.getCityWeather("Dublin, Ireland");
+        Hourly forecast = null;
+
+        if (countryName != null)
+            forecast = client.getHourlyForecast(countryCode, countryName);
 
         updateView(forecast);
     }
 
     @UiThread
-    void updateView(Forecast forecast) {
-        day_detail.setText(day);
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    void updateView(Hourly forecast) {
+        day_detail.setText(forecast.getHourlyForecast().get(0).getFCTTIME().getWeekdayName());
 
-        setGeneralStats(forecast.getList().get(0));
-        for (DetailedForecast dailyForecast : forecast.getList()) {
-            Date date = null;
-            try {
-                date = fmt.parse(dailyForecast.getDtTxt());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            cal.setTime(date);
-            int day = cal.get(Calendar.DAY_OF_WEEK);
-            DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
-            String dayOfMonthStr = symbols.getWeekdays()[day];
-            double temp = dailyForecast.getMain().getTemp();
+        for (HourlyForecast dailyForecast : forecast.getHourlyForecast()) {
 
-            if (dayOfMonthStr.equals(this.day))
-                days.add(new Reading(dayOfMonthStr, temp, dailyForecast.getMain().getTempMin(), date.getHours(), ""));
+            String temp = dailyForecast.getTemp().getMetric();
+
+            days.add(new Reading(temp, dailyForecast.getFCTTIME().getHourPadded(), ""));
+            setGeneralStats(dailyForecast);
         }
 
-        for (Reading day : days) {
-            Bar bar = new Bar();
-            bar.setName(day.hour < 10 ? ("0" + day.hour + ":00") : (day.hour + ":00"));
-            bar.setValue((int) day.maxTmp);
-            bar.setColor(Color.parseColor("#4484f6"));
-            bar.setLabelColor(Color.parseColor("#1485CC"));
-            bar.setValueSuffix("°");
-            points.add(bar);
+        LineSet lineSet = new LineSet();
+
+        // Style dots
+        lineSet.setDots(true);
+        lineSet.setDotsColor(getResources().getColor(R.color.line_dots));
+        lineSet.setDotsRadius(4);
+        lineSet.setDotsStrokeThickness(1);
+        lineSet.setDotsStrokeColor(getResources().getColor(R.color.dot_fill));
+
+        // Style line
+        lineSet.setLineThickness(5);
+        lineSet.setLineColor(getResources().getColor(R.color.line_dash));
+
+        // Style background fill
+        lineSet.setFill(true);
+        lineSet.setFillColor(getResources().getColor(R.color.line_fill));
+
+        // Style type
+//        lineSet.setDashed(true);
+        lineSet.setSmooth(true);
+
+        Collections.sort(days, comparator);
+
+        for(int i = 0; i < days.size(); i+= 4){
+            Point p = new Point(days.get(i).hour, Integer.valueOf(days.get(i).maxTmp));
+            p.setCoordinates(1f,1f);
+            lineSet.addPoint(p);
         }
-        graph.setBars(points);
+//        for (Reading day : days) {
+//                    lineSet.addPoint(new Point(day.hour, Integer.valueOf(day.maxTmp)));
+//
+//        }
+
+        graph.addData(lineSet);
+
+        graph.setGrid(randPaint())
+                .setMaxAxisValue(40, 4)
+                        .setAxisX(true)
+                                .setLabels(true)
+                        //.setVerticalGrid(randPaint())
+                .setHorizontalGrid(randPaint())
+                        //.setThresholdLine(2, randPaint())
+                        //.setLabels(true)
+                .animate(randAnimation());
+
+        //.show();
+        graph.setStep(4);
+
     }
 
-    private void setGeneralStats(DetailedForecast general) {
-        description.setText(general.getWeather().get(0).getDescription());
-        humidity.setText("Humidity: "+ general.getMain().getHumidity());
-        wind.setText("Speed: " + general.getWind().getSpeed());
-        pressure.setText("Pressure: "+general.getMain().getPressure());
+    private Animation randAnimation() {
+
+        switch (new Random().nextInt(3)) {
+            case 0:
+                return new Animation()
+                        .setEasing(new QuintEaseOut());
+//                        .setEndAction(mEndAction);
+            case 1:
+                return new Animation()
+                        .setEasing(new BounceEaseOut());
+//                        .setEndAction(mEndAction);
+            default:
+                return new Animation()
+                        .setEasing(new QuintEaseOut())
+                        .setOverlap(randValue(0.5f, 1f));
+
+        }
+    }
+
+    public static float randValue(float min, float max) {
+        return  (new Random().nextFloat() * (max - min)) + min;
+    }
+
+    private static boolean randBoolean() {
+        return Math.random() < 0.5;
+    }
+
+
+    private static Paint randPaint() {
+
+//        if (true) {
+            Paint paint = new Paint();
+            paint.setColor(Color.parseColor("#b0bec5"));
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setAntiAlias(true);
+            paint.setStrokeWidth(Tools.fromDpToPx(1));
+            if (randBoolean())
+                paint.setPathEffect(new DashPathEffect(new float[]{10, 10}, 0));
+            return paint;
+
+    }
+
+    private void setGeneralStats(HourlyForecast general) {
+        description.setText(general.getCondition());
+        humidity.setText( general.getHumidity());
+        wind.setText(general.getWspd().getMetric());
+        pressure.setText(general.getFeelslike().getMetric());
     }
 
     private class Reading {
-        String day;
-        double maxTmp;
-        double minTmp;
-        int hour;
+        String maxTmp;
+        String hour;
         String description;
 
-        private Reading(String day, double maxTmp, double minTmp, int hour, String description) {
-            this.day = day;
+        private Reading(String maxTmp, String hour, String description) {
             this.maxTmp = maxTmp;
-            this.minTmp = minTmp;
             this.hour = hour;
             this.description = description;
         }

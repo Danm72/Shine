@@ -19,20 +19,6 @@
             android:src="@drawable/cloud2" />
     </LinearLayout>
 
-    <com.devspark.robototextview.widget.RobotoTextView
-        android:id="@+id/day_detail"
-        style="?android:attr/textAppearanceLarge"
-        android:layout_width="match_parent"
-        android:layout_height="25dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:padding="2dp"
-        android:text="Day"
-        android:textAlignment="center"
-        android:textIsSelectable="true"
-        app:typeface="roboto_slab_regular"
-        tools:context=".DayDetailFragment" />
-
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="0dp"
@@ -40,21 +26,42 @@
         android:background="@drawable/abc_menu_dropdown_panel_holo_light"
         android:orientation="vertical">
 
+        <com.devspark.robototextview.widget.RobotoTextView
+            android:id="@+id/day_detail"
+            style="?android:attr/textAppearanceLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:padding="2dp"
+            android:text="Day"
+            android:textAlignment="center"
+            android:textIsSelectable="true"
+            app:typeface="roboto_slab_regular"
+            tools:context=".DayDetailFragment"
+            android:gravity="center" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".02"
+            android:background="@android:color/darker_gray"
+            android:padding="5dp" />
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_weight="3"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_weight="3.5"
             android:orientation="vertical"
             android:paddingBottom="10dp">
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
+                android:layout_marginTop="15dp"
                 android:layout_weight="2"
-                android:orientation="horizontal"
-                android:layout_marginTop="15dp">
+                android:orientation="horizontal">
 
                 <ImageView
                     android:id="@+id/imageView2"
@@ -69,46 +76,28 @@
                     style="?android:attr/textAppearanceLarge"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="7"
+                    android:layout_weight="6"
                     android:ellipsize="end"
-                    android:gravity="center"
-                    android:paddingLeft="5dp"
+                    android:gravity="left"
                     android:singleLine="true"
 
-                    android:text="Wind"
+                    android:text="Wind Speed:"
                     app:typeface="roboto_slab_light"
                     tools:context=".DayDetailFragment" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/linearLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="0dp"
-                android:layout_weight="2"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/imageView3"
-                    android:layout_width="0dp"
-                    android:layout_height="25dp"
-                    android:layout_weight="2"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/info" />
 
                 <com.devspark.robototextview.widget.RobotoTextView
-                    android:id="@+id/day_description"
+                    android:id="@+id/day_wind_val"
                     style="?android:attr/textAppearanceLarge"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="7"
+                    android:layout_weight="3"
                     android:ellipsize="end"
-                    android:gravity="center"
-                    android:paddingLeft="5dp"
                     android:singleLine="true"
 
-                    android:text="Description"
+                    android:text="10"
                     app:typeface="roboto_slab_light"
-                    tools:context=".DayDetailFragment" />
+                    tools:context=".DayDetailFragment"
+                    android:gravity="center" />
             </LinearLayout>
 
             <LinearLayout
@@ -131,15 +120,28 @@
                     style="?android:attr/textAppearanceLarge"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="7"
+                    android:layout_weight="6"
                     android:ellipsize="end"
-                    android:gravity="center"
-                    android:paddingLeft="5dp"
+                    android:gravity="left"
                     android:singleLine="true"
 
-                    android:text="Pressure"
+                    android:text="Pressure:"
                     app:typeface="roboto_slab_light"
                     tools:context=".DayDetailFragment" />
+
+                <com.devspark.robototextview.widget.RobotoTextView
+                    android:id="@+id/day_pressure_val"
+                    style="?android:attr/textAppearanceLarge"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+
+                    android:text="10"
+                    app:typeface="roboto_slab_light"
+                    tools:context=".DayDetailFragment"
+                    android:gravity="center" />
             </LinearLayout>
 
             <LinearLayout
@@ -161,13 +163,26 @@
                     style="?android:attr/textAppearanceLarge"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="7"
+                    android:layout_weight="6"
                     android:ellipsize="end"
-                    android:gravity="center"
-                    android:paddingLeft="5dp"
+                    android:gravity="left"
                     android:singleLine="true"
 
-                    android:text="Humidity"
+                    android:text="Humidity:"
+                    app:typeface="roboto_slab_light"
+                    tools:context=".DayDetailFragment" />
+
+                <com.devspark.robototextview.widget.RobotoTextView
+                    android:id="@+id/day_humidity_val"
+                    style="?android:attr/textAppearanceLarge"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:singleLine="true"
+
+                    android:text="10"
                     app:typeface="roboto_slab_light"
                     tools:context=".DayDetailFragment" />
             </LinearLayout>
@@ -175,25 +190,66 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:layout_marginLeft="15dp">
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="0dp"
+                android:layout_height="25dp"
+                android:layout_weight="1.5"
+                android:scaleType="fitCenter"
+                android:src="@drawable/info" />
+
+            <com.devspark.robototextview.widget.RobotoTextView
+                android:id="@+id/day_description_val"
+                style="?android:attr/textAppearanceLarge"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="7"
+                android:ellipsize="end"
+                android:gravity="left"
+                android:singleLine="false"
+                android:textSize="15dp"
+                app:typeface="roboto_slab_light"
+                tools:context=".DayDetailFragment"
+                android:layout_marginLeft="5dp" />
+        </LinearLayout>
+
         <View
             android:layout_width="fill_parent"
             android:layout_height="0dp"
+            android:layout_weight=".02"
             android:background="@android:color/darker_gray"
-            android:layout_weight=".01"
             android:padding="5dp" />
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_weight="4"
+            android:layout_weight="5"
             android:orientation="vertical"
             android:padding="5dp">
 
-            <com.echo.holographlibrary.BarGraph
+            <com.db.chart.view.LineChartView
+                xmlns:chart="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/graph"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:clickable="true" />
+                android:paddingTop="10dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                chart:chart_shadowDy="1dp"
+                chart:chart_shadowRadius="1dp"
+                chart:chart_shadowColor="#80000000"
+                chart:chart_axisColor="#37474f"
+                chart:chart_axisBorderSpacing="0dp"
+                />
 
         </LinearLayout>
 
