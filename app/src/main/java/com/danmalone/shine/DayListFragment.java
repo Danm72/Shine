@@ -195,6 +195,9 @@ public class DayListFragment extends Fragment {
 
     @UiThread
     void updateView(TenDay forecast) {
+        if(forecast == null){
+            return;
+        }
         for (Forecastday_ dailyForecast : forecast.getForecast().getSimpleforecast().getForecastday()) {
 
             String maxTmp = dailyForecast.getHigh().getCelsius();

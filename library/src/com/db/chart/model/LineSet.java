@@ -22,7 +22,7 @@ import com.db.chart.Tools;
 import com.db.chart.exception.ChartException;
 
 /**
- * Data model containing a set of {@link Point} to be used by {@link LineChartView}.
+ * Data model containing a set of {@link com.db.chart.model.Point} to be used by {@link LineChartView}.
  */
 public class LineSet extends ChartSet{
 

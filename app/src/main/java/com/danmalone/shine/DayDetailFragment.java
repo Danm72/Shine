@@ -15,7 +15,6 @@ import com.db.chart.model.Point;
 import com.db.chart.view.LineChartView;
 import com.db.chart.view.animation.Animation;
 import com.db.chart.view.animation.easing.bounce.BounceEaseOut;
-import com.db.chart.view.animation.easing.elastic.ElasticEaseOut;
 import com.db.chart.view.animation.easing.quint.QuintEaseOut;
 
 import org.androidannotations.annotations.AfterInject;
@@ -56,16 +55,16 @@ public class DayDetailFragment extends Fragment {
     @ViewById(R.id.graph)
     LineChartView graph;
 
-    @ViewById(R.id.day_wind)
+    @ViewById(R.id.day_wind_val)
     TextView wind;
 
-    @ViewById(R.id.day_description)
+    @ViewById(R.id.day_description_val)
     TextView description;
 
-    @ViewById(R.id.day_humidity)
+    @ViewById(R.id.day_humidity_val)
     TextView humidity;
 
-    @ViewById(R.id.day_pressure)
+    @ViewById(R.id.day_pressure_val)
     TextView pressure;
 
     List<Reading> days;
@@ -165,22 +164,31 @@ public class DayDetailFragment extends Fragment {
 
         Collections.sort(days, comparator);
 
-        for (Reading day : days) {
-            lineSet.addPoint(new Point(day.hour, Integer.valueOf(day.maxTmp)));
+        for(int i = 0; i < days.size(); i+= 4){
+            Point p = new Point(days.get(i).hour, Integer.valueOf(days.get(i).maxTmp));
+            p.setCoordinates(1f,1f);
+            lineSet.addPoint(p);
         }
+//        for (Reading day : days) {
+//                    lineSet.addPoint(new Point(day.hour, Integer.valueOf(day.maxTmp)));
+//
+//        }
 
         graph.addData(lineSet);
 
         graph.setGrid(randPaint())
-                .setMaxAxisValue(24, 8)
-                        .setAxisX(false)
+                .setMaxAxisValue(40, 4)
+                        .setAxisX(true)
+                                .setLabels(true)
                         //.setVerticalGrid(randPaint())
                 .setHorizontalGrid(randPaint())
                         //.setThresholdLine(2, randPaint())
                         //.setLabels(true)
-                .animate(randAnimation())
-        //.show()
-        ;
+                .animate(randAnimation());
+
+        //.show();
+        graph.setStep(4);
+
     }
 
     private Animation randAnimation() {
@@ -196,10 +204,14 @@ public class DayDetailFragment extends Fragment {
 //                        .setEndAction(mEndAction);
             default:
                 return new Animation()
-                        .setAnimateInSequence(randBoolean())
-                        .setEasing(new ElasticEaseOut());
-//                        .setEndAction(mEndAction);
+                        .setEasing(new QuintEaseOut())
+                        .setOverlap(randValue(0.5f, 1f));
+
         }
+    }
+
+    public static float randValue(float min, float max) {
+        return  (new Random().nextFloat() * (max - min)) + min;
     }
 
     private static boolean randBoolean() {
@@ -209,7 +221,7 @@ public class DayDetailFragment extends Fragment {
 
     private static Paint randPaint() {
 
-        if (randBoolean()) {
+//        if (true) {
             Paint paint = new Paint();
             paint.setColor(Color.parseColor("#b0bec5"));
             paint.setStyle(Paint.Style.STROKE);
@@ -218,15 +230,14 @@ public class DayDetailFragment extends Fragment {
             if (randBoolean())
                 paint.setPathEffect(new DashPathEffect(new float[]{10, 10}, 0));
             return paint;
-        }
-        return null;
+
     }
 
     private void setGeneralStats(HourlyForecast general) {
         description.setText(general.getCondition());
-        humidity.setText("Humidity: " + general.getHumidity());
-        wind.setText("Wind Speed: " + general.getWspd().getMetric());
-        pressure.setText("Feels like: " + general.getFeelslike().getMetric());
+        humidity.setText( general.getHumidity());
+        wind.setText(general.getWspd().getMetric());
+        pressure.setText(general.getFeelslike().getMetric());
     }
 
     private class Reading {

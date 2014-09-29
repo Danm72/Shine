@@ -2,7 +2,9 @@
 <resources>
     <color name="white">#ffff</color>
     <color name="line_dash">#E3493B</color>
-    <color name="line_fill">#3388c6c3</color>
+    <!--<color name="line_fill">#22ffce07</color>-->
+    <color name="line_fill">#523388c6</color>
+
     <color name="line_dots">#23B5AF</color>
     <color name="dot_fill">#A9DDD9</color>
 </resources>

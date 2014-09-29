@@ -26,10 +26,12 @@ import com.db.chart.view.ChartView;
 import com.db.chart.view.animation.easing.BaseEasingMethod;
 import com.db.chart.view.animation.easing.quint.QuintEaseOut;
 
+
 /**
  * Controls the whole animation process.
  */
 public class Animation{
+	
 	
 	/** The delay between data updates to be drawn in the screen */
 	private final static long DELAY_BETWEEN_UPDATES = 20;
@@ -88,7 +90,7 @@ public class Animation{
     };
 
 
-    /** {@link ChartView} element to request draw updates */
+    /** {@link com.db.chart.view.ChartView} element to request draw updates */
 	private ChartView mChartView;
 	
 	
@@ -112,7 +114,16 @@ public class Animation{
 	 * Keeps the information regarding whether points will be animated 
 	 * in parallel or in sequence.
 	 */
-	private boolean mInSequence;
+	private float mOverlapingFactor;
+	
+	
+	/**
+	 * Factor from 0 to 1 to specify where does the animation starts 
+	 * according innerchart area.
+	 */
+	private float mStartXFactor;
+	private float mStartYFactor;
+	
 	
 	
 	
@@ -127,28 +138,34 @@ public class Animation{
 	
 	
 	
+	
 	private void init(int duration){
+		
 		mGlobalDuration = duration;
 		mCurrentGlobalDuration = 0;
 		mGlobalInitTime = 0;
+		mOverlapingFactor = 1;
 		mEasing = new QuintEaseOut();
-		mInSequence = false;
 		mPlaying = false;
+		mStartXFactor = -1;
+		mStartYFactor = -1;
 	}
+	
+	
 	
 	
 	
 	/**
 	 * Method that prepares the animation. Defines starting points, targets, 
 	 * distance, yadda, as well as the first set of points to be drawn.
-	 * @param chartView - {@link ChartView} to invalidate each time the 
+	 * @param chartView - {@link com.db.chart.view.ChartView} to invalidate each time the
 	 * animation wants to update the values.
 	 * @param startY - starting point of values.
-	 * @param sets - Array of {@link ChartSet} containing the target values.
-	 * @return Array of {@link ChartSet} containing the first values to be 
+	 * @param sets - Array of {@link com.db.chart.model.ChartSet} containing the target values.
+	 * @return Array of {@link com.db.chart.model.ChartSet} containing the first values to be
 	 * drawn.
 	 */
-	public ArrayList<ChartSet> prepareEnter(ChartView chartView, 
+	public ArrayList<ChartSet> prepareEnter(ChartView chartView, ArrayList<float[]> startingX,
 			ArrayList<float[]> startingY, ArrayList<ChartSet> sets){
 		
 		mChartView = chartView;
@@ -158,51 +175,88 @@ public class Animation{
 		mInitTime = new long[mSets.get(0).size()];
 		mCurrentDuration = new long[mSets.get(0).size()];
 		
-		if(mInSequence) // Divide the duration between the points
-			mDuration = (int) mGlobalDuration / mSets.get(0).size();
-		else // Duration applied to all
-			mDuration = (int) mGlobalDuration;
+		// Calculates the expected duration as there was with no overlap (factor = 0)
+		float noOverlapDuration = mGlobalDuration / mSets.get(0).size();
+		// Adjust the duration to the overlap
+		mDuration = (int) (noOverlapDuration + (mGlobalDuration - noOverlapDuration) * mOverlapingFactor);
 		
+		// Define animation paths for each entry
 		for(int i = 0; i < mSets.size(); i++){
 			for(int j = 0; j < mSets.get(i).size(); j++){
 				Path path = new Path();
-				path.moveTo(mSets.get(i).getEntry(j).getX(), startingY.get(i)[j]);
+				path.moveTo(startingX.get(i)[j], startingY.get(i)[j]);
 				path.lineTo(mSets.get(i).getEntry(j).getX(), mSets.get(i).getEntry(j).getY());
 				mPathMeasures[i][j] = new PathMeasure(path, false);
 			}
 		}
+		
+		// Define initial time for each entry
+		mGlobalInitTime = System.currentTimeMillis();
+		long noOverlapInitTime;
+		for(int i = 0; i < mInitTime.length; i++){
+			// Calculates the expected init time as there was with no overlap (factor = 0)
+			noOverlapInitTime = mGlobalInitTime + (i * (mGlobalDuration / mSets.get(0).size()));
+			// Adjust the init time to overlap
+			mInitTime[i] = (noOverlapInitTime - ((long) (mOverlapingFactor * (noOverlapInitTime - mGlobalInitTime))));
+		}
+		
 		mPlaying = true;
-		
-		// Save initial time. Only executed the first time this method gets called.
-		if(mGlobalInitTime == 0){
-			mGlobalInitTime = System.currentTimeMillis();
-			for(int i = 0; i < mInitTime.length; i++){
-				if(mInSequence){
-					mInitTime[i] = mGlobalInitTime + i * mDuration;
-				}else
-					mInitTime[i] = mGlobalInitTime;
-			}
-		}	
-		
 		return getUpdate();
 	}
 	
 	
-	public ArrayList<ChartSet> prepareEnter(ChartView chartView, 
-			float startY, ArrayList<ChartSet> sets){
+	
+	
+	
+	public ArrayList<ChartSet> prepareEnter(ChartView chartView, ArrayList<ChartSet> sets){
 		
+		float x = 0;
+		if(mStartXFactor != -1)
+			x = chartView.getInnerChartLeft() 
+				+ (chartView.getInnerChartRight() - chartView.getInnerChartLeft()) 
+					* mStartXFactor;
+		
+		float y = 0;
+		if(mStartYFactor != -1)
+			y = chartView.getInnerChartBottom() 
+				- (chartView.getInnerChartBottom() - chartView.getInnerChartTop()) 
+					* mStartYFactor;
+		else
+			y = chartView.getInnerChartBottom();
+			
+		
+		ArrayList<float[]> startXValues = new ArrayList<float[]>(sets.size());
 		ArrayList<float[]> startYValues = new ArrayList<float[]>(sets.size());
+		float[] Xset;
+		float[] Yset;
 		for(int i = 0; i < sets.size(); i++){
 			
-			float[] set = new float[sets.get(i).size()];
-			for(int j = 0; j < set.length; j++)
-				set[j] = startY;
-			startYValues.add(set);
+			Xset = new float[sets.get(i).size()];
+			Yset = new float[sets.get(i).size()];
+			
+			for(int j = 0; j < sets.get(i).size(); j++){
+				if(mStartXFactor == -1)
+					Xset[j] = sets.get(i).getEntry(j).getX();
+				else
+					Xset[j] = x;
+				Yset[j] = y;
+			}
+			
+			startXValues.add(Xset);
+			startYValues.add(Yset);
+			
 		}
 		
-		return prepareEnter(chartView, 
+		mStartXFactor = -1;
+		mStartYFactor = -1;
+		
+		return prepareEnter(chartView, startXValues,
 				startYValues, sets);
 	}
+	
+	
+	
+	
 	
 	/**
 	 * Updates values, with the next interpolation, to be drawn next.
@@ -211,10 +265,11 @@ public class Animation{
 	private ArrayList<ChartSet> getUpdate(){
 		
 		// Process current animation duration
+		long diff;
 		long currentTime = System.currentTimeMillis();
 		mCurrentGlobalDuration = currentTime - mGlobalInitTime;
 		for(int i = 0; i < mCurrentDuration.length; i++){
-			long diff = currentTime - mInitTime[i];
+			diff = currentTime - mInitTime[i];
 			if(diff < 0)
 				mCurrentDuration[i] = 0;
 			else
@@ -227,10 +282,11 @@ public class Animation{
 			mCurrentGlobalDuration = mGlobalDuration;
 		
 		// Update next values to be drawn
+		float[] posUpdate;
 		for(int i = 0; i < mSets.size(); i++)
 			for(int j = 0; j < mSets.get(i).size(); j++){
-				mSets.get(i).getEntry(j)
-					.setY(getEntryUpdate(i, j, normalizeTime(j)));
+				posUpdate = getEntryUpdate(i, j, normalizeTime(j));
+				mSets.get(i).getEntry(j).setCoordinates(posUpdate[0], posUpdate[1]);
 			}
 		
 		// Sets the next update or finishes the animation
@@ -250,6 +306,7 @@ public class Animation{
 	
 	
 	
+	
 	/**
 	 * Normalize time to a 0-1 relation.
 	 * @param currentTime - value from 0 to 1 representing the current time 
@@ -261,21 +318,32 @@ public class Animation{
 	}
 	
 	
+	
+	
 	/**
-	 * Gets the next position value of a point
+	 * Gets the next position coordinate of a point
 	 * @param i - set index
 	 * @param j - point index
 	 * @param normalizedTime
 	 * @return x display value where point will be drawn
 	 */
-	private float getEntryUpdate(int i, int j, float normalizedTime){
+	private float[] getEntryUpdate(int i, int j, float normalizedTime){
 		float[] pos = new float[2];
 		if(mPathMeasures[i][j].getPosTan(mPathMeasures[i][j].getLength() * mEasing.next(normalizedTime), pos, null))
-			return pos[1];
+			return pos;
 		pos[0] = mSets.get(i).getEntry(j).getX();
 		pos[1] = mSets.get(i).getEntry(j).getY();
-		return pos[1];
+		return pos;
 	}
+	
+	
+	
+	
+	public boolean isPlaying(){
+		return mPlaying;
+	}
+	
+	
 	
 	
 	
@@ -284,6 +352,7 @@ public class Animation{
 	 * Setters
 	 * --------
 	 */
+	
 	
 	public Animation setEasing(BaseEasingMethod easing){
 		mEasing = easing;
@@ -297,15 +366,22 @@ public class Animation{
 	}
 	
 	
-	public Animation setAnimateInSequence(boolean bool){
-		mInSequence = bool;
+	/**
+	 * Sets whether entries should be animate in sequence or paralell.
+	 * @param factor - value from 0 to 1 that tells how much will be the 
+	 * overlap of an entry's animation according to the previous one.
+	 * 0 - no overlap
+	 * 1 - all entries animate in paralell (default)
+	 */
+	public Animation setOverlap(float factor){
+		mOverlapingFactor = factor;
 		return this;
 	}
 	
 	
 	/**
+	 * Sets an action to be executed once the animation finishes.
 	 * @param runnable to be executed once the animation finishes.
-	 * @return this
 	 */
 	public Animation setEndAction(Runnable runnable){
 		mRunnable = runnable;
@@ -313,8 +389,17 @@ public class Animation{
 	}
 	
 	
-	public boolean isPlaying(){
-		return mPlaying;
+	/**
+	 * Sets the starting point for the animation.
+	 * @param xFactor - horizontal factor between 0 and 1
+	 * @param yFactor - vertical factor between 0 and 1
+	 * Eg. xFactor=0; yFactor=0; starts the animation on the bottom left 
+	 * corner of the inner chart area.
+	 */
+	public Animation setStartPoint(float xFactor, float yFactor){
+		mStartXFactor = xFactor;
+		mStartYFactor = yFactor;
+		return this;
 	}
 	
 }

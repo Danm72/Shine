@@ -17,7 +17,7 @@
 package com.db.chart.model;
 
 /**
- * Data model containing a set of {@link Bar} to be used by {@link BarChartView}.
+ * Data model containing a set of {@link com.db.chart.model.Bar} to be used by {@link BarChartView}.
  */
 public class BarSet extends ChartSet{
 	
@@ -56,9 +56,8 @@ public class BarSet extends ChartSet{
 	 */
 	
 	public BarSet setColor(int color){
-		for(ChartEntry bar : this.getEntries()){
-			((Bar) bar).setColor(color);
-		}
+		for(int i = 0; i < size(); i++)
+			((Bar) getEntry(i)).setColor(color);
 		return this;
 	}
 }
